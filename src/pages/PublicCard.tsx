@@ -61,10 +61,34 @@ const PublicCard = () => {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [viewTracked, setViewTracked] = useState(false);
+
+  // Track analytics event
+  const trackEvent = async (eventType: string, profileId: string) => {
+    if (profileId === "demo") return; // Don't track demo profile
+    try {
+      await supabase.from("analytics").insert({
+        profile_id: profileId,
+        event_type: eventType,
+        user_agent: navigator.userAgent,
+        referrer: document.referrer || null,
+      });
+    } catch (error) {
+      console.error("Analytics error:", error);
+    }
+  };
 
   useEffect(() => {
     loadProfile();
   }, [username]);
+
+  // Track page view once profile is loaded
+  useEffect(() => {
+    if (profile && !viewTracked && profile.id !== "demo") {
+      trackEvent("view", profile.id);
+      setViewTracked(true);
+    }
+  }, [profile, viewTracked]);
 
   const loadProfile = async () => {
     if (!username) {
@@ -148,6 +172,9 @@ const PublicCard = () => {
 
   const generateVCard = () => {
     if (!profile) return;
+
+    // Track contact save
+    trackEvent("contact_saved", profile.id);
 
     const vcard = `BEGIN:VCARD
 VERSION:3.0
@@ -388,6 +415,7 @@ END:VCARD`.replace(/\n{2,}/g, "\n");
                     href={(link as any).href || link.value}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => trackEvent(`${link.key}_click`, profile.id)}
                     className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${
                       colors
                         ? `${colors.bg} ${colors.hover} ${colors.text}`

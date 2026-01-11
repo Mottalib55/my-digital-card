@@ -4,7 +4,7 @@ import {
   Save, LogOut, Upload, User, Phone, Mail, Briefcase, ExternalLink,
   Linkedin, Twitter, Instagram, Github, Facebook, Youtube,
   Globe, MessageCircle, Send, Music2, Camera, Link, Copy, Check, CreditCard,
-  QrCode, Download, X
+  QrCode, Download, X, Eye, UserCheck, BarChart3
 } from "lucide-react";
 import { QRCodeCanvas } from "qrcode.react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -25,6 +25,13 @@ interface FieldConfig {
   type?: string;
 }
 
+interface AnalyticsData {
+  views: number;
+  contacts_saved: number;
+  whatsapp_clicks: number;
+  linkedin_clicks: number;
+}
+
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user, loading: authLoading, signOut } = useAuth();
@@ -37,6 +44,12 @@ const Dashboard = () => {
   const [profile, setProfile] = useState<Partial<Profile>>({});
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string>("");
+  const [analytics, setAnalytics] = useState<AnalyticsData>({
+    views: 0,
+    contacts_saved: 0,
+    whatsapp_clicks: 0,
+    linkedin_clicks: 0,
+  });
 
   useEffect(() => {
     if (authLoading) return; // Wait for auth to load
@@ -61,8 +74,32 @@ const Dashboard = () => {
       if (data.avatar_url) {
         setAvatarPreview(data.avatar_url);
       }
+      // Load analytics for this profile
+      loadAnalytics(data.id);
     }
     setLoading(false);
+  };
+
+  const loadAnalytics = async (profileId: string) => {
+    const { data, error } = await supabase
+      .from("analytics")
+      .select("event_type")
+      .eq("profile_id", profileId);
+
+    if (error) {
+      console.error("Error loading analytics:", error);
+      return;
+    }
+
+    if (data) {
+      const counts = {
+        views: data.filter((e) => e.event_type === "view").length,
+        contacts_saved: data.filter((e) => e.event_type === "contact_saved").length,
+        whatsapp_clicks: data.filter((e) => e.event_type === "whatsapp_click").length,
+        linkedin_clicks: data.filter((e) => e.event_type === "linkedin_click").length,
+      };
+      setAnalytics(counts);
+    }
   };
 
   const handleChange = (key: string, value: string | boolean) => {
@@ -340,6 +377,44 @@ const Dashboard = () => {
             </div>
           </div>
         )}
+
+        {/* Analytics Dashboard */}
+        <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
+          <div className="flex items-center gap-2 pb-3 border-b border-slate-100 mb-4">
+            <BarChart3 size={20} className="text-slate-400" />
+            <h2 className="font-semibold text-slate-900">Analytics</h2>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 text-center">
+              <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-2">
+                <Eye size={20} className="text-white" />
+              </div>
+              <p className="text-2xl font-bold text-blue-600">{analytics.views}</p>
+              <p className="text-xs text-blue-500 font-medium">Card Views</p>
+            </div>
+            <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 text-center">
+              <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-2">
+                <UserCheck size={20} className="text-white" />
+              </div>
+              <p className="text-2xl font-bold text-green-600">{analytics.contacts_saved}</p>
+              <p className="text-xs text-green-500 font-medium">Contacts Saved</p>
+            </div>
+            <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-xl p-4 text-center">
+              <div className="w-10 h-10 bg-[#25D366] rounded-full flex items-center justify-center mx-auto mb-2">
+                <MessageCircle size={20} className="text-white" />
+              </div>
+              <p className="text-2xl font-bold text-emerald-600">{analytics.whatsapp_clicks}</p>
+              <p className="text-xs text-emerald-500 font-medium">WhatsApp Clicks</p>
+            </div>
+            <div className="bg-gradient-to-br from-sky-50 to-sky-100 rounded-xl p-4 text-center">
+              <div className="w-10 h-10 bg-[#0A66C2] rounded-full flex items-center justify-center mx-auto mb-2">
+                <Linkedin size={20} className="text-white" />
+              </div>
+              <p className="text-2xl font-bold text-sky-600">{analytics.linkedin_clicks}</p>
+              <p className="text-xs text-sky-500 font-medium">LinkedIn Clicks</p>
+            </div>
+          </div>
+        </div>
 
         {/* Error Message */}
         {error && (

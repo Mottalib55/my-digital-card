@@ -111,3 +111,33 @@ USING (
   bucket_id = 'avatars'
   AND auth.uid()::text = (storage.foldername(name))[1]
 );
+
+-- 9. Create analytics table for tracking card interactions
+CREATE TABLE IF NOT EXISTS analytics (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  profile_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
+  event_type VARCHAR(50) NOT NULL, -- 'view', 'contact_saved', 'whatsapp_click', 'linkedin_click', etc.
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  user_agent TEXT,
+  referrer TEXT
+);
+
+-- Index for fast queries
+CREATE INDEX IF NOT EXISTS idx_analytics_profile_id ON analytics(profile_id);
+CREATE INDEX IF NOT EXISTS idx_analytics_event_type ON analytics(event_type);
+CREATE INDEX IF NOT EXISTS idx_analytics_created_at ON analytics(created_at);
+
+-- Enable RLS
+ALTER TABLE analytics ENABLE ROW LEVEL SECURITY;
+
+-- Anyone can insert analytics (for tracking public card views)
+CREATE POLICY "Anyone can insert analytics" ON analytics
+  FOR INSERT WITH CHECK (true);
+
+-- Users can only read their own analytics
+CREATE POLICY "Users can read their own analytics" ON analytics
+  FOR SELECT USING (
+    profile_id IN (
+      SELECT id FROM profiles WHERE user_id = auth.uid()
+    )
+  );
