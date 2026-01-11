@@ -29,6 +29,7 @@ const Dashboard = () => {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [error, setError] = useState("");
   const [profile, setProfile] = useState<Partial<Profile>>({});
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string>("");
@@ -81,6 +82,7 @@ const Dashboard = () => {
     if (!user) return;
 
     setSaving(true);
+    setError("");
 
     let avatarUrl = profile.avatar_url;
 
@@ -93,13 +95,18 @@ const Dashboard = () => {
         .from("avatars")
         .upload(fileName, avatarFile, { upsert: true });
 
-      if (!uploadError) {
-        const { data } = supabase.storage.from("avatars").getPublicUrl(fileName);
-        avatarUrl = data.publicUrl;
+      if (uploadError) {
+        console.error("Avatar upload error:", uploadError);
+        setError(`Failed to upload photo: ${uploadError.message}`);
+        setSaving(false);
+        return;
       }
+
+      const { data } = supabase.storage.from("avatars").getPublicUrl(fileName);
+      avatarUrl = data.publicUrl;
     }
 
-    const { error } = await supabase
+    const { error: updateError } = await supabase
       .from("profiles")
       .update({
         ...profile,
@@ -108,7 +115,11 @@ const Dashboard = () => {
       })
       .eq("user_id", user.id);
 
-    if (!error) {
+    if (updateError) {
+      setError(`Failed to save: ${updateError.message}`);
+    } else {
+      setProfile((prev) => ({ ...prev, avatar_url: avatarUrl }));
+      setAvatarFile(null);
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     }
@@ -265,6 +276,13 @@ const Dashboard = () => {
             </button>
           </div>
         </div>
+
+        {/* Error Message */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
+            <p className="text-red-600 text-sm">{error}</p>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Section: Identité */}

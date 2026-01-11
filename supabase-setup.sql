@@ -72,11 +72,42 @@ CREATE POLICY "Users can update their own profile" ON profiles
 CREATE POLICY "Users can insert their own profile" ON profiles
   FOR INSERT WITH CHECK (auth.uid() = user_id);
 
--- 7. Créer le bucket pour les avatars (à faire dans Storage)
--- Allez dans Storage > Create new bucket > Nom: "avatars" > Public: ON
+-- 7. Create the avatars bucket
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('avatars', 'avatars', true)
+ON CONFLICT (id) DO NOTHING;
 
--- 8. Politique pour le bucket avatars (à ajouter dans Storage > avatars > Policies)
--- SELECT: Allow public access
--- INSERT: Allow authenticated users
--- UPDATE: Allow users to update their own files
--- DELETE: Allow users to delete their own files
+-- 8. Storage policies for avatars bucket
+
+-- Allow public read access to avatars
+CREATE POLICY "Public can view avatars"
+ON storage.objects FOR SELECT
+USING (bucket_id = 'avatars');
+
+-- Allow authenticated users to upload avatars
+CREATE POLICY "Authenticated users can upload avatars"
+ON storage.objects FOR INSERT
+WITH CHECK (
+  bucket_id = 'avatars'
+  AND auth.role() = 'authenticated'
+);
+
+-- Allow users to update their own avatars
+CREATE POLICY "Users can update their own avatars"
+ON storage.objects FOR UPDATE
+USING (
+  bucket_id = 'avatars'
+  AND auth.uid()::text = (storage.foldername(name))[1]
+)
+WITH CHECK (
+  bucket_id = 'avatars'
+  AND auth.uid()::text = (storage.foldername(name))[1]
+);
+
+-- Allow users to delete their own avatars
+CREATE POLICY "Users can delete their own avatars"
+ON storage.objects FOR DELETE
+USING (
+  bucket_id = 'avatars'
+  AND auth.uid()::text = (storage.foldername(name))[1]
+);
