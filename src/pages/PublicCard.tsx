@@ -219,7 +219,7 @@ END:VCARD`.replace(/\n{2,}/g, "\n");
                 className="flex items-center gap-2 text-white bg-slate-900 hover:bg-slate-800 px-4 py-2 rounded-xl shadow-sm hover:shadow transition-all"
               >
                 <UserPlusIcon size={18} />
-                Créer ma carte
+                Créer ma carte gratuitement
               </button>
             </div>
           )}
