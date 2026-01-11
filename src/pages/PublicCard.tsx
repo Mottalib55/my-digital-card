@@ -36,9 +36,9 @@ const PublicCard = () => {
         username: "demo",
         first_name: "Marie",
         last_name: "Martin",
-        title: "Designer UX",
+        title: "UX Designer",
         company: "Creative Studio",
-        bio: "Passionnée par le design et l'expérience utilisateur. Je crée des interfaces intuitives et élégantes.",
+        bio: "Passionate about design and user experience. I create intuitive and elegant interfaces.",
         avatar_url: "",
         phone: "+33612345678",
         phone_enabled: true,
@@ -145,12 +145,12 @@ END:VCARD`.replace(/\n{2,}/g, "\n");
       <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center p-6">
         <div className="text-center">
           <h1 className="text-4xl font-bold text-slate-900 mb-4">404</h1>
-          <p className="text-slate-500 mb-6">Cette carte n'existe pas.</p>
+          <p className="text-slate-500 mb-6">This card doesn't exist.</p>
           <button
             onClick={() => navigate("/")}
             className="bg-slate-900 text-white px-6 py-3 rounded-xl font-medium hover:bg-slate-800 transition-colors"
           >
-            Retour à l'accueil
+            Back to home
           </button>
         </div>
       </div>
@@ -317,7 +317,7 @@ END:VCARD`.replace(/\n{2,}/g, "\n");
               className="w-full flex items-center justify-center gap-2 bg-slate-900 text-white py-3.5 rounded-xl font-medium hover:bg-slate-800 transition-colors mb-6"
             >
               <UserPlus size={20} />
-              Ajouter aux contacts
+              Add to contacts
             </button>
           )}
 
@@ -354,7 +354,7 @@ END:VCARD`.replace(/\n{2,}/g, "\n");
               <div className="flex items-center gap-4 mt-3">
                 <p className="text-xs text-slate-400 flex items-center gap-1">
                   <QrCode size={14} />
-                  Scannez pour partager
+                  Scan to share
                 </p>
                 <button
                   onClick={() => {
@@ -368,7 +368,7 @@ END:VCARD`.replace(/\n{2,}/g, "\n");
                   className="text-xs text-slate-500 hover:text-slate-700 flex items-center gap-1 transition-colors"
                 >
                   <Download size={14} />
-                  Télécharger
+                  Download
                 </button>
               </div>
             </div>
@@ -377,7 +377,7 @@ END:VCARD`.replace(/\n{2,}/g, "\n");
 
         {/* Footer */}
         <p className="text-center text-slate-400 text-sm mt-6">
-          Créez votre carte sur{" "}
+          Create your card on{" "}
           <button onClick={() => navigate("/")} className="text-slate-600 hover:underline">
             DigiCard
           </button>

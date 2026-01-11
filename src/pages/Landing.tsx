@@ -7,23 +7,23 @@ const Landing = () => {
   const features = [
     {
       icon: <CreditCard className="w-6 h-6" />,
-      title: "Carte digitale moderne",
-      description: "Créez une carte de visite numérique élégante en quelques minutes.",
+      title: "Modern Digital Card",
+      description: "Create an elegant digital business card in minutes.",
     },
     {
       icon: <Zap className="w-6 h-6" />,
-      title: "Partage instantané",
-      description: "Partagez votre carte via un simple lien ou QR code.",
+      title: "Instant Sharing",
+      description: "Share your card via a simple link or QR code.",
     },
     {
       icon: <Users className="w-6 h-6" />,
-      title: "Tous vos réseaux",
-      description: "Regroupez tous vos réseaux sociaux en un seul endroit.",
+      title: "All Your Networks",
+      description: "Gather all your social networks in one place.",
     },
     {
       icon: <Shield className="w-6 h-6" />,
-      title: "100% Gratuit",
-      description: "Créez et gérez votre carte sans frais, pour toujours.",
+      title: "100% Free",
+      description: "Create and manage your card for free, forever.",
     },
   ];
 
@@ -43,13 +43,13 @@ const Landing = () => {
               onClick={() => navigate("/login")}
               className="text-slate-300 hover:text-white transition-colors font-medium"
             >
-              Connexion
+              Login
             </button>
             <button
               onClick={() => navigate("/register")}
               className="bg-white text-slate-900 px-5 py-2.5 rounded-xl font-medium hover:bg-slate-100 transition-colors"
             >
-              Créer ma carte
+              Create my card
             </button>
           </div>
         </div>
@@ -60,31 +60,32 @@ const Landing = () => {
         <div className="max-w-4xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-medium mb-8">
             <Sparkles className="w-4 h-4" />
-            Nouveau : Ajoutez WhatsApp et Telegram
+            New: Add WhatsApp and Telegram
           </div>
           <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-            Votre carte de visite{" "}
+            Your{" "}
             <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-              digitale
-            </span>
+              digital
+            </span>{" "}
+            business card
           </h1>
           <p className="text-xl text-slate-400 mb-10 max-w-2xl mx-auto">
-            Créez gratuitement une carte de visite numérique professionnelle.
-            Partagez vos coordonnées et réseaux sociaux en un clic.
+            Create a professional digital business card for free.
+            Share your contact info and social networks in one click.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <button
               onClick={() => navigate("/register")}
               className="group flex items-center gap-2 bg-white text-slate-900 px-8 py-4 rounded-2xl font-semibold text-lg hover:bg-slate-100 transition-all hover:scale-105"
             >
-              Créer ma carte gratuitement
+              Create my card for free
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </button>
             <button
               onClick={() => navigate("/card/demo")}
               className="text-slate-300 hover:text-white transition-colors font-medium px-8 py-4"
             >
-              Voir un exemple →
+              See an example →
             </button>
           </div>
         </div>
@@ -95,9 +96,9 @@ const Landing = () => {
             <div className="flex flex-col items-center text-center">
               <div className="w-24 h-24 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 mb-4"></div>
               <h3 className="text-xl font-bold text-white mb-1">Marie Martin</h3>
-              <p className="text-slate-400 text-sm mb-4">Designer UX · Paris</p>
+              <p className="text-slate-400 text-sm mb-4">UX Designer · Paris</p>
               <p className="text-slate-300 text-sm mb-6">
-                Passionnée par le design et l'expérience utilisateur.
+                Passionate about design and user experience.
               </p>
               <div className="flex gap-3">
                 {[1, 2, 3, 4].map((i) => (
@@ -116,7 +117,7 @@ const Landing = () => {
       <section className="bg-slate-800/50 py-24">
         <div className="container mx-auto px-6">
           <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-16">
-            Tout ce dont vous avez besoin
+            Everything you need
           </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {features.map((feature, index) => (
@@ -140,16 +141,16 @@ const Landing = () => {
         <div className="container mx-auto px-6">
           <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl p-12 text-center">
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              Prêt à créer votre carte ?
+              Ready to create your card?
             </h2>
             <p className="text-white/80 mb-8 max-w-xl mx-auto">
-              Rejoignez des milliers d'utilisateurs qui partagent déjà leur carte digitale.
+              Join thousands of users who already share their digital card.
             </p>
             <button
               onClick={() => navigate("/register")}
               className="bg-white text-slate-900 px-8 py-4 rounded-2xl font-semibold text-lg hover:bg-slate-100 transition-colors"
             >
-              Commencer maintenant
+              Get started now
             </button>
           </div>
         </div>
@@ -158,7 +159,7 @@ const Landing = () => {
       {/* Footer */}
       <footer className="border-t border-white/10 py-8">
         <div className="container mx-auto px-6 text-center text-slate-400">
-          <p>© 2024 DigiCard. Tous droits réservés.</p>
+          <p>© 2025 DigiCard. All rights reserved.</p>
         </div>
       </footer>
     </div>

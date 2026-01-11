@@ -20,13 +20,13 @@ const Register = () => {
 
     // Validate username
     if (!/^[a-z0-9_]+$/.test(username)) {
-      setError("Le nom d'utilisateur ne peut contenir que des lettres minuscules, chiffres et underscores.");
+      setError("Username can only contain lowercase letters, numbers and underscores.");
       setLoading(false);
       return;
     }
 
     if (username.length < 3) {
-      setError("Le nom d'utilisateur doit contenir au moins 3 caractères.");
+      setError("Username must be at least 3 characters long.");
       setLoading(false);
       return;
     }
@@ -39,7 +39,7 @@ const Register = () => {
       .single();
 
     if (existingProfile) {
-      setError("Ce nom d'utilisateur est déjà pris.");
+      setError("This username is already taken.");
       setLoading(false);
       return;
     }
@@ -48,9 +48,9 @@ const Register = () => {
 
     if (signUpError) {
       if (signUpError.message.includes("already registered")) {
-        setError("Cet email est déjà utilisé.");
+        setError("This email is already in use.");
       } else {
-        setError("Une erreur est survenue. Veuillez réessayer.");
+        setError("An error occurred. Please try again.");
       }
       setLoading(false);
       return;
@@ -81,7 +81,7 @@ const Register = () => {
           className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors mb-8"
         >
           <ArrowLeft size={20} />
-          Retour
+          Back
         </button>
 
         {/* Card */}
@@ -97,10 +97,10 @@ const Register = () => {
           </div>
 
           <h1 className="text-2xl font-bold text-white text-center mb-2">
-            Créer votre compte
+            Create your account
           </h1>
           <p className="text-slate-400 text-center mb-8">
-            Commencez à créer votre carte digitale
+            Start creating your digital card
           </p>
 
           {/* Error Message */}
@@ -114,7 +114,7 @@ const Register = () => {
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-2">
-                Nom d'utilisateur
+                Username
               </label>
               <div className="relative">
                 <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
@@ -122,13 +122,13 @@ const Register = () => {
                   type="text"
                   value={username}
                   onChange={(e) => setUsername(e.target.value.toLowerCase())}
-                  placeholder="votrenom"
+                  placeholder="yourname"
                   required
                   className="w-full bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                 />
               </div>
               <p className="text-xs text-slate-500 mt-1.5">
-                digicard.com/card/<span className="text-blue-400">{username || "votrenom"}</span>
+                digicard.com/card/<span className="text-blue-400">{username || "yourname"}</span>
               </p>
             </div>
 
@@ -142,7 +142,7 @@ const Register = () => {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="vous@exemple.com"
+                  placeholder="you@example.com"
                   required
                   className="w-full bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                 />
@@ -151,7 +151,7 @@ const Register = () => {
 
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-2">
-                Mot de passe
+                Password
               </label>
               <div className="relative">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
@@ -165,7 +165,7 @@ const Register = () => {
                   className="w-full bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                 />
               </div>
-              <p className="text-xs text-slate-500 mt-1.5">Minimum 6 caractères</p>
+              <p className="text-xs text-slate-500 mt-1.5">Minimum 6 characters</p>
             </div>
 
             <button
@@ -176,19 +176,19 @@ const Register = () => {
               {loading ? (
                 <>
                   <Loader2 className="w-5 h-5 animate-spin" />
-                  Création...
+                  Creating...
                 </>
               ) : (
-                "Créer mon compte"
+                "Create my account"
               )}
             </button>
           </form>
 
           {/* Login Link */}
           <p className="text-slate-400 text-center mt-6">
-            Déjà un compte ?{" "}
+            Already have an account?{" "}
             <Link to="/login" className="text-white hover:underline font-medium">
-              Se connecter
+              Sign in
             </Link>
           </p>
         </div>

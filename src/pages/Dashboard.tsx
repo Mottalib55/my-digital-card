@@ -131,9 +131,9 @@ const Dashboard = () => {
   };
 
   const contactFields: FieldConfig[] = [
-    { key: "phone", dbKey: "phone", label: "Téléphone", icon: <Phone size={18} />, placeholder: "+33 6 12 34 56 78", type: "tel" },
-    { key: "email", dbKey: "email_contact", label: "Email", icon: <Mail size={18} />, placeholder: "contact@exemple.com", type: "email" },
-    { key: "website", dbKey: "website", label: "Site web", icon: <Globe size={18} />, placeholder: "https://monsite.com", type: "url" },
+    { key: "phone", dbKey: "phone", label: "Phone", icon: <Phone size={18} />, placeholder: "+1 555 123 4567", type: "tel" },
+    { key: "email", dbKey: "email_contact", label: "Email", icon: <Mail size={18} />, placeholder: "contact@example.com", type: "email" },
+    { key: "website", dbKey: "website", label: "Website", icon: <Globe size={18} />, placeholder: "https://mysite.com", type: "url" },
   ];
 
   const professionalFields: FieldConfig[] = [
@@ -235,14 +235,14 @@ const Dashboard = () => {
               className="flex items-center gap-2 text-slate-600 hover:text-slate-900 transition-colors"
             >
               <ExternalLink size={18} />
-              <span className="hidden sm:inline">Voir ma carte</span>
+              <span className="hidden sm:inline">View my card</span>
             </button>
             <button
               onClick={handleLogout}
               className="flex items-center gap-2 text-slate-600 hover:text-red-600 transition-colors"
             >
               <LogOut size={18} />
-              <span className="hidden sm:inline">Déconnexion</span>
+              <span className="hidden sm:inline">Sign out</span>
             </button>
           </div>
         </div>
@@ -251,7 +251,7 @@ const Dashboard = () => {
       <div className="max-w-2xl mx-auto p-4 md:p-8">
         {/* Share Link */}
         <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-6 mb-6 text-white">
-          <h2 className="font-semibold mb-2">Votre lien de carte</h2>
+          <h2 className="font-semibold mb-2">Your card link</h2>
           <div className="flex items-center gap-2 bg-white/20 backdrop-blur rounded-xl p-3">
             <span className="flex-1 text-sm truncate">
               {getCardUrl()}
@@ -261,7 +261,7 @@ const Dashboard = () => {
               className="flex items-center gap-1.5 bg-white text-slate-900 px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-slate-100 transition-colors"
             >
               {copied ? <Check size={16} /> : <Copy size={16} />}
-              {copied ? "Copié !" : "Copier"}
+              {copied ? "Copied!" : "Copy"}
             </button>
           </div>
         </div>
@@ -271,7 +271,7 @@ const Dashboard = () => {
           <div className="bg-white rounded-2xl shadow-lg p-6 space-y-5">
             <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
               <User size={20} className="text-slate-400" />
-              <h2 className="font-semibold text-slate-900">Identité</h2>
+              <h2 className="font-semibold text-slate-900">Identity</h2>
             </div>
 
             {/* Photo */}
@@ -290,7 +290,7 @@ const Dashboard = () => {
               <div className="space-y-2">
                 <label className="cursor-pointer inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
                   <Upload size={16} />
-                  Choisir une photo
+                  Choose a photo
                   <input
                     type="file"
                     accept="image/*"
@@ -305,22 +305,22 @@ const Dashboard = () => {
             {/* Nom & Prénom */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1.5">Prénom</label>
+                <label className="block text-xs font-medium text-slate-500 mb-1.5">First name</label>
                 <input
                   type="text"
                   value={profile.first_name || ""}
                   onChange={(e) => handleChange("first_name", e.target.value)}
-                  placeholder="Jean"
+                  placeholder="John"
                   className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none transition text-sm"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1.5">Nom</label>
+                <label className="block text-xs font-medium text-slate-500 mb-1.5">Last name</label>
                 <input
                   type="text"
                   value={profile.last_name || ""}
                   onChange={(e) => handleChange("last_name", e.target.value)}
-                  placeholder="Dupont"
+                  placeholder="Doe"
                   className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none transition text-sm"
                 />
               </div>
@@ -329,22 +329,22 @@ const Dashboard = () => {
             {/* Titre & Entreprise */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1.5">Titre / Poste</label>
+                <label className="block text-xs font-medium text-slate-500 mb-1.5">Title / Position</label>
                 <input
                   type="text"
                   value={profile.title || ""}
                   onChange={(e) => handleChange("title", e.target.value)}
-                  placeholder="Développeur Web"
+                  placeholder="Web Developer"
                   className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none transition text-sm"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1.5">Entreprise</label>
+                <label className="block text-xs font-medium text-slate-500 mb-1.5">Company</label>
                 <input
                   type="text"
                   value={profile.company || ""}
                   onChange={(e) => handleChange("company", e.target.value)}
-                  placeholder="Ma Société"
+                  placeholder="My Company"
                   className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none transition text-sm"
                 />
               </div>
@@ -356,7 +356,7 @@ const Dashboard = () => {
               <textarea
                 value={profile.bio || ""}
                 onChange={(e) => handleChange("bio", e.target.value)}
-                placeholder="Une courte description de vous..."
+                placeholder="A short description about yourself..."
                 rows={3}
                 className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none transition resize-none text-sm"
               />
@@ -369,27 +369,27 @@ const Dashboard = () => {
               <Phone size={20} className="text-slate-400" />
               <h2 className="font-semibold text-slate-900">Contact</h2>
             </div>
-            {renderFieldGroup("Coordonnées", contactFields)}
+            {renderFieldGroup("Contact info", contactFields)}
           </div>
 
           {/* Section: Réseaux Professionnels */}
           <div className="bg-white rounded-2xl shadow-lg p-6 space-y-5">
             <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
               <Briefcase size={20} className="text-slate-400" />
-              <h2 className="font-semibold text-slate-900">Professionnel</h2>
+              <h2 className="font-semibold text-slate-900">Professional</h2>
             </div>
-            {renderFieldGroup("Réseaux professionnels", professionalFields)}
+            {renderFieldGroup("Professional networks", professionalFields)}
           </div>
 
           {/* Section: Réseaux Sociaux */}
           <div className="bg-white rounded-2xl shadow-lg p-6 space-y-5">
             <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
               <Link size={20} className="text-slate-400" />
-              <h2 className="font-semibold text-slate-900">Réseaux Sociaux</h2>
+              <h2 className="font-semibold text-slate-900">Social Networks</h2>
             </div>
-            {renderFieldGroup("Plateformes sociales", socialFields)}
+            {renderFieldGroup("Social platforms", socialFields)}
             {renderFieldGroup("Tech & Dev", techFields)}
-            {renderFieldGroup("Messagerie", messagingFields)}
+            {renderFieldGroup("Messaging", messagingFields)}
           </div>
 
           {/* Submit */}
@@ -403,7 +403,7 @@ const Dashboard = () => {
             }`}
           >
             <Save size={20} />
-            {saving ? "Enregistrement..." : saved ? "Enregistré !" : "Enregistrer les modifications"}
+            {saving ? "Saving..." : saved ? "Saved!" : "Save changes"}
           </button>
         </form>
       </div>

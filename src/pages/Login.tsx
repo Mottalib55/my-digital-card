@@ -20,9 +20,9 @@ const Login = () => {
 
     if (signInError) {
       if (signInError.message.includes("Invalid login")) {
-        setError("Email ou mot de passe incorrect.");
+        setError("Invalid email or password.");
       } else {
-        setError("Une erreur est survenue. Veuillez réessayer.");
+        setError("An error occurred. Please try again.");
       }
       setLoading(false);
       return;
@@ -41,7 +41,7 @@ const Login = () => {
           className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors mb-8"
         >
           <ArrowLeft size={20} />
-          Retour
+          Back
         </button>
 
         {/* Card */}
@@ -57,10 +57,10 @@ const Login = () => {
           </div>
 
           <h1 className="text-2xl font-bold text-white text-center mb-2">
-            Bon retour !
+            Welcome back!
           </h1>
           <p className="text-slate-400 text-center mb-8">
-            Connectez-vous pour gérer votre carte
+            Sign in to manage your card
           </p>
 
           {/* Error Message */}
@@ -82,7 +82,7 @@ const Login = () => {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="vous@exemple.com"
+                  placeholder="you@example.com"
                   required
                   className="w-full bg-white/5 border border-white/10 rounded-xl pl-12 pr-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                 />
@@ -91,7 +91,7 @@ const Login = () => {
 
             <div>
               <label className="block text-sm font-medium text-slate-300 mb-2">
-                Mot de passe
+                Password
               </label>
               <div className="relative">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
@@ -114,19 +114,19 @@ const Login = () => {
               {loading ? (
                 <>
                   <Loader2 className="w-5 h-5 animate-spin" />
-                  Connexion...
+                  Signing in...
                 </>
               ) : (
-                "Se connecter"
+                "Sign in"
               )}
             </button>
           </form>
 
           {/* Register Link */}
           <p className="text-slate-400 text-center mt-6">
-            Pas encore de compte ?{" "}
+            Don't have an account?{" "}
             <Link to="/register" className="text-white hover:underline font-medium">
-              Créer un compte
+              Create one
             </Link>
           </p>
         </div>
