@@ -3,8 +3,10 @@ import { useNavigate } from "react-router-dom";
 import {
   Save, LogOut, Upload, User, Phone, Mail, Briefcase, ExternalLink,
   Linkedin, Twitter, Instagram, Github, Facebook, Youtube,
-  Globe, MessageCircle, Send, Music2, Camera, Link, Copy, Check, CreditCard
+  Globe, MessageCircle, Send, Music2, Camera, Link, Copy, Check, CreditCard,
+  QrCode, Download, X
 } from "lucide-react";
+import { QRCodeCanvas } from "qrcode.react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase, Profile } from "@/lib/supabase";
 
@@ -30,6 +32,7 @@ const Dashboard = () => {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [showQR, setShowQR] = useState(false);
   const [error, setError] = useState("");
   const [profile, setProfile] = useState<Partial<Profile>>({});
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
@@ -277,6 +280,13 @@ const Dashboard = () => {
               {getCardUrl()}
             </span>
             <button
+              onClick={() => setShowQR(true)}
+              className="flex items-center gap-1.5 bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
+            >
+              <QrCode size={16} />
+              <span className="hidden sm:inline">QR</span>
+            </button>
+            <button
               onClick={copyLink}
               className="flex items-center gap-1.5 bg-white text-slate-900 px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-slate-100 transition-colors"
             >
@@ -285,6 +295,51 @@ const Dashboard = () => {
             </button>
           </div>
         </div>
+
+        {/* QR Code Modal */}
+        {showQR && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowQR(false)}>
+            <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl" onClick={(e) => e.stopPropagation()}>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-slate-900">Your QR Code</h3>
+                <button
+                  onClick={() => setShowQR(false)}
+                  className="p-1 hover:bg-slate-100 rounded-lg transition-colors"
+                >
+                  <X size={20} className="text-slate-500" />
+                </button>
+              </div>
+              <div className="flex flex-col items-center">
+                <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-inner">
+                  <QRCodeCanvas
+                    id="dashboard-qr-code"
+                    value={getCardUrl()}
+                    size={200}
+                    level="M"
+                    includeMargin={false}
+                  />
+                </div>
+                <p className="text-sm text-slate-500 mt-3 text-center">
+                  Scan to view your digital card
+                </p>
+                <button
+                  onClick={() => {
+                    const canvas = document.getElementById("dashboard-qr-code") as HTMLCanvasElement;
+                    const url = canvas.toDataURL("image/png");
+                    const link = document.createElement("a");
+                    link.href = url;
+                    link.download = `qrcode-${profile.username || "card"}.png`;
+                    link.click();
+                  }}
+                  className="mt-4 flex items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-xl font-medium hover:bg-slate-800 transition-colors"
+                >
+                  <Download size={18} />
+                  Download QR Code
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Error Message */}
         {error && (
