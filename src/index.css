@@ -93,6 +93,18 @@
     font-weight: 300;
   }
 
+  .vcard-phone {
+    @apply mt-4 flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-300;
+    background: hsl(var(--secondary));
+    color: hsl(var(--muted-foreground));
+    font-size: 0.95rem;
+  }
+
+  .vcard-phone:hover {
+    background: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+  }
+
   .vcard-social-link {
     @apply flex items-center justify-center w-12 h-12 rounded-full transition-all duration-300 ease-out;
     background: hsl(var(--secondary));

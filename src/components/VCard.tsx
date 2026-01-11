@@ -1,4 +1,4 @@
-import { Instagram, Linkedin, Twitter, Github, Mail } from "lucide-react";
+import { Instagram, Linkedin, Twitter, Github, Mail, Phone } from "lucide-react";
 import avatar from "@/assets/avatar.jpg";
 
 interface SocialLink {
@@ -37,6 +37,15 @@ const VCard = () => {
         <p className="vcard-bio animate-fade-in-delay-2">
           Développeur passionné & créateur digital. J'aime transformer des idées en expériences numériques uniques.
         </p>
+
+        {/* Numéro de téléphone */}
+        <a 
+          href="tel:+33612345678" 
+          className="vcard-phone animate-fade-in-delay-2"
+        >
+          <Phone size={18} />
+          <span>+33 6 12 34 56 78</span>
+        </a>
 
         {/* Réseaux Sociaux */}
         <div className="flex gap-3 mt-8 animate-fade-in-delay-3">
