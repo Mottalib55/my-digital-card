@@ -2,9 +2,9 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   Instagram, Linkedin, Twitter, Github, Facebook, Youtube,
-  Mail, Phone, UserPlus, Globe, MessageCircle, Send, Music2, Camera, QrCode
+  Mail, Phone, UserPlus, Globe, MessageCircle, Send, Music2, Camera, QrCode, Download
 } from "lucide-react";
-import { QRCodeSVG } from "qrcode.react";
+import { QRCodeCanvas } from "qrcode.react";
 import { supabase, Profile } from "@/lib/supabase";
 
 const PublicCard = () => {
@@ -308,17 +308,34 @@ END:VCARD`.replace(/\n{2,}/g, "\n");
           <div className="mt-8 pt-6 border-t border-slate-100">
             <div className="flex flex-col items-center">
               <div className="bg-white p-4 rounded-2xl shadow-inner border border-slate-100">
-                <QRCodeSVG
+                <QRCodeCanvas
+                  id="qr-code"
                   value={`${window.location.origin}${import.meta.env.BASE_URL}#/card/${username}`}
                   size={120}
                   level="M"
                   includeMargin={false}
                 />
               </div>
-              <p className="text-xs text-slate-400 mt-3 flex items-center gap-1">
-                <QrCode size={14} />
-                Scannez pour partager
-              </p>
+              <div className="flex items-center gap-4 mt-3">
+                <p className="text-xs text-slate-400 flex items-center gap-1">
+                  <QrCode size={14} />
+                  Scannez pour partager
+                </p>
+                <button
+                  onClick={() => {
+                    const canvas = document.getElementById("qr-code") as HTMLCanvasElement;
+                    const url = canvas.toDataURL("image/png");
+                    const link = document.createElement("a");
+                    link.href = url;
+                    link.download = `qrcode-${username}.png`;
+                    link.click();
+                  }}
+                  className="text-xs text-slate-500 hover:text-slate-700 flex items-center gap-1 transition-colors"
+                >
+                  <Download size={14} />
+                  Télécharger
+                </button>
+              </div>
             </div>
           </div>
         </div>
