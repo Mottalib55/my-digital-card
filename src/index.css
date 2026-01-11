@@ -105,6 +105,17 @@
     color: hsl(var(--primary-foreground));
   }
 
+  .vcard-add-contact {
+    @apply mt-6 flex items-center gap-2 px-6 py-3 rounded-full font-medium transition-all duration-300 cursor-pointer;
+    background: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+  }
+
+  .vcard-add-contact:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px -5px hsl(var(--primary) / 0.4);
+  }
+
   .vcard-social-link {
     @apply flex items-center justify-center w-12 h-12 rounded-full transition-all duration-300 ease-out;
     background: hsl(var(--secondary));
