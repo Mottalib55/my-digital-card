@@ -1,22 +1,55 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
-  Instagram, Linkedin, Twitter, Github, Facebook, Youtube,
-  Mail, Phone, UserPlus, Globe, Send, Music2, Camera, QrCode, Download,
+  Instagram, Linkedin, Github, Facebook, Youtube,
+  Mail, Phone, UserPlus, Globe, QrCode, Download,
   LayoutDashboard, LogIn, UserPlus as UserPlusIcon
 } from "lucide-react";
 
-// WhatsApp icon SVG component
+// Custom SVG icons for social platforms
 const WhatsAppIcon = ({ size = 20 }: { size?: number }) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 24 24"
-    fill="currentColor"
-  >
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
   </svg>
 );
+
+const TelegramIcon = ({ size = 20 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+  </svg>
+);
+
+const TikTokIcon = ({ size = 20 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/>
+  </svg>
+);
+
+const SnapchatIcon = ({ size = 20 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.217-.937 1.407-5.965 1.407-5.965s-.359-.719-.359-1.782c0-1.668.967-2.914 2.171-2.914 1.023 0 1.518.769 1.518 1.69 0 1.029-.655 2.568-.994 3.995-.283 1.194.599 2.169 1.777 2.169 2.133 0 3.772-2.249 3.772-5.495 0-2.873-2.064-4.882-5.012-4.882-3.414 0-5.418 2.561-5.418 5.207 0 1.031.397 2.138.893 2.738a.36.36 0 0 1 .083.345l-.333 1.36c-.053.22-.174.267-.402.161-1.499-.698-2.436-2.889-2.436-4.649 0-3.785 2.75-7.262 7.929-7.262 4.163 0 7.398 2.967 7.398 6.931 0 4.136-2.607 7.464-6.227 7.464-1.216 0-2.359-.631-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24 12.017 24c6.624 0 11.99-5.367 11.99-11.988C24.007 5.367 18.641 0 12.017 0z"/>
+  </svg>
+);
+
+const XTwitterIcon = ({ size = 20 }: { size?: number }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
+    <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/>
+  </svg>
+);
+
+// Brand colors for social platforms
+const socialColors: Record<string, { bg: string; hover: string; text: string }> = {
+  instagram: { bg: "bg-gradient-to-br from-[#833AB4] via-[#E1306C] to-[#F77737]", hover: "hover:opacity-90", text: "text-white" },
+  linkedin: { bg: "bg-[#0A66C2]", hover: "hover:bg-[#004182]", text: "text-white" },
+  twitter: { bg: "bg-black", hover: "hover:bg-gray-800", text: "text-white" },
+  facebook: { bg: "bg-[#1877F2]", hover: "hover:bg-[#0d65d9]", text: "text-white" },
+  tiktok: { bg: "bg-black", hover: "hover:bg-gray-800", text: "text-white" },
+  youtube: { bg: "bg-[#FF0000]", hover: "hover:bg-[#cc0000]", text: "text-white" },
+  snapchat: { bg: "bg-[#FFFC00]", hover: "hover:bg-[#e6e300]", text: "text-black" },
+  github: { bg: "bg-[#181717]", hover: "hover:bg-[#333]", text: "text-white" },
+  whatsapp: { bg: "bg-[#25D366]", hover: "hover:bg-[#1fb855]", text: "text-white" },
+  telegram: { bg: "bg-[#26A5E4]", hover: "hover:bg-[#1e8bc3]", text: "text-white" },
+};
 import { QRCodeCanvas } from "qrcode.react";
 import { supabase, Profile } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
@@ -175,12 +208,12 @@ END:VCARD`.replace(/\n{2,}/g, "\n");
 
   const socialLinks = [
     { key: "linkedin", icon: <Linkedin size={20} />, value: profile.linkedin, enabled: profile.linkedin_enabled, label: "LinkedIn" },
-    { key: "twitter", icon: <Twitter size={20} />, value: profile.twitter, enabled: profile.twitter_enabled, label: "Twitter" },
+    { key: "twitter", icon: <XTwitterIcon size={20} />, value: profile.twitter, enabled: profile.twitter_enabled, label: "X (Twitter)" },
     { key: "instagram", icon: <Instagram size={20} />, value: profile.instagram, enabled: profile.instagram_enabled, label: "Instagram" },
     { key: "facebook", icon: <Facebook size={20} />, value: profile.facebook, enabled: profile.facebook_enabled, label: "Facebook" },
-    { key: "tiktok", icon: <Music2 size={20} />, value: profile.tiktok, enabled: profile.tiktok_enabled, label: "TikTok" },
+    { key: "tiktok", icon: <TikTokIcon size={20} />, value: profile.tiktok, enabled: profile.tiktok_enabled, label: "TikTok" },
     { key: "youtube", icon: <Youtube size={20} />, value: profile.youtube, enabled: profile.youtube_enabled, label: "YouTube" },
-    { key: "snapchat", icon: <Camera size={20} />, value: profile.snapchat, enabled: profile.snapchat_enabled, label: "Snapchat" },
+    { key: "snapchat", icon: <SnapchatIcon size={20} />, value: profile.snapchat, enabled: profile.snapchat_enabled, label: "Snapchat" },
     { key: "github", icon: <Github size={20} />, value: profile.github, enabled: profile.github_enabled, label: "GitHub" },
     {
       key: "whatsapp",
@@ -192,7 +225,7 @@ END:VCARD`.replace(/\n{2,}/g, "\n");
     },
     {
       key: "telegram",
-      icon: <Send size={20} />,
+      icon: <TelegramIcon size={20} />,
       value: profile.telegram,
       enabled: profile.telegram_enabled,
       label: "Telegram",
@@ -344,22 +377,25 @@ END:VCARD`.replace(/\n{2,}/g, "\n");
           {/* Réseaux Sociaux */}
           {socialLinks.length > 0 && (
             <div className="flex flex-wrap justify-center gap-3">
-              {socialLinks.map((link) => (
-                <a
-                  key={link.key}
-                  href={(link as any).href || link.value}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`w-12 h-12 rounded-full flex items-center justify-center transition-colors ${
-                    link.key === "whatsapp"
-                      ? "bg-[#25D366] hover:bg-[#1fb855] text-white"
-                      : "bg-slate-100 hover:bg-slate-200 text-slate-700"
-                  }`}
-                  title={link.label}
-                >
-                  {link.icon}
-                </a>
-              ))}
+              {socialLinks.map((link) => {
+                const colors = socialColors[link.key];
+                return (
+                  <a
+                    key={link.key}
+                    href={(link as any).href || link.value}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`w-12 h-12 rounded-full flex items-center justify-center transition-all ${
+                      colors
+                        ? `${colors.bg} ${colors.hover} ${colors.text}`
+                        : "bg-slate-100 hover:bg-slate-200 text-slate-700"
+                    }`}
+                    title={link.label}
+                  >
+                    {link.icon}
+                  </a>
+                );
+              })}
             </div>
           )}
 
