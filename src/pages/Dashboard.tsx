@@ -62,6 +62,8 @@ const Dashboard = () => {
     linkedin_clicks: 0,
   });
   const [chartData, setChartData] = useState<ChartDataPoint[]>([]);
+  const [chartPeriod, setChartPeriod] = useState<7 | 30 | 90>(7);
+  const [profileId, setProfileId] = useState<string | null>(null);
 
   useEffect(() => {
     if (authLoading) return; // Wait for auth to load
@@ -71,6 +73,13 @@ const Dashboard = () => {
     }
     loadProfile();
   }, [user, authLoading]);
+
+  // Reload chart when period changes
+  useEffect(() => {
+    if (profileId) {
+      loadAnalytics(profileId);
+    }
+  }, [chartPeriod]);
 
   const loadProfile = async () => {
     if (!user) return;
@@ -83,6 +92,7 @@ const Dashboard = () => {
 
     if (data) {
       setProfile(data);
+      setProfileId(data.id);
       if (data.avatar_url) {
         setAvatarPreview(data.avatar_url);
       }
@@ -113,23 +123,35 @@ const Dashboard = () => {
       };
       setAnalytics(counts);
 
-      // Generate chart data for last 7 days
-      const last7Days: ChartDataPoint[] = [];
-      for (let i = 6; i >= 0; i--) {
+      // Generate chart data based on selected period
+      const chartPoints: ChartDataPoint[] = [];
+      const days = chartPeriod;
+
+      for (let i = days - 1; i >= 0; i--) {
         const date = new Date();
         date.setDate(date.getDate() - i);
         const dateStr = date.toISOString().split("T")[0];
         const dayEvents = data.filter((e) => e.created_at?.startsWith(dateStr));
 
-        last7Days.push({
-          date: date.toLocaleDateString("en-US", { weekday: "short", day: "numeric" }),
+        // Format date based on period
+        let dateLabel: string;
+        if (days <= 7) {
+          dateLabel = date.toLocaleDateString("en-US", { weekday: "short", day: "numeric" });
+        } else if (days <= 30) {
+          dateLabel = date.toLocaleDateString("en-US", { day: "numeric", month: "short" });
+        } else {
+          dateLabel = date.toLocaleDateString("en-US", { day: "numeric", month: "short" });
+        }
+
+        chartPoints.push({
+          date: dateLabel,
           views: dayEvents.filter((e) => e.event_type === "view").length,
           contacts: dayEvents.filter((e) => e.event_type === "contact_saved").length,
           whatsapp: dayEvents.filter((e) => e.event_type === "whatsapp_click").length,
           linkedin: dayEvents.filter((e) => e.event_type === "linkedin_click").length,
         });
       }
-      setChartData(last7Days);
+      setChartData(chartPoints);
     }
   };
 
@@ -448,9 +470,43 @@ const Dashboard = () => {
 
           {/* Activity Chart */}
           <div className="mt-6 pt-6 border-t border-slate-100">
-            <div className="flex items-center gap-2 mb-4">
-              <TrendingUp size={18} className="text-slate-400" />
-              <h3 className="font-medium text-slate-700">Last 7 Days Activity</h3>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <TrendingUp size={18} className="text-slate-400" />
+                <h3 className="font-medium text-slate-700">Activity</h3>
+              </div>
+              <div className="flex gap-1 bg-slate-100 rounded-lg p-1">
+                <button
+                  onClick={() => setChartPeriod(7)}
+                  className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${
+                    chartPeriod === 7
+                      ? "bg-white text-slate-900 shadow-sm"
+                      : "text-slate-500 hover:text-slate-700"
+                  }`}
+                >
+                  7 days
+                </button>
+                <button
+                  onClick={() => setChartPeriod(30)}
+                  className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${
+                    chartPeriod === 30
+                      ? "bg-white text-slate-900 shadow-sm"
+                      : "text-slate-500 hover:text-slate-700"
+                  }`}
+                >
+                  1 month
+                </button>
+                <button
+                  onClick={() => setChartPeriod(90)}
+                  className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${
+                    chartPeriod === 90
+                      ? "bg-white text-slate-900 shadow-sm"
+                      : "text-slate-500 hover:text-slate-700"
+                  }`}
+                >
+                  3 months
+                </button>
+              </div>
             </div>
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
