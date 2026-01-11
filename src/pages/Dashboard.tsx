@@ -24,7 +24,7 @@ interface FieldConfig {
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { user, signOut } = useAuth();
+  const { user, loading: authLoading, signOut } = useAuth();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -34,12 +34,13 @@ const Dashboard = () => {
   const [avatarPreview, setAvatarPreview] = useState<string>("");
 
   useEffect(() => {
+    if (authLoading) return; // Wait for auth to load
     if (!user) {
       navigate("/login");
       return;
     }
     loadProfile();
-  }, [user]);
+  }, [user, authLoading]);
 
   const loadProfile = async () => {
     if (!user) return;
@@ -209,7 +210,7 @@ const Dashboard = () => {
     </div>
   );
 
-  if (loading) {
+  if (loading || authLoading) {
     return (
       <div className="min-h-screen bg-slate-100 flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-900"></div>
