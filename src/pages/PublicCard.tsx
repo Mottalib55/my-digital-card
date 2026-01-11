@@ -66,13 +66,20 @@ const PublicCard = () => {
   // Track analytics event
   const trackEvent = async (eventType: string, profileId: string) => {
     if (profileId === "demo") return; // Don't track demo profile
+    console.log("Tracking event:", eventType, "for profile:", profileId);
     try {
-      await supabase.from("analytics").insert({
+      const { data, error } = await supabase.from("analytics").insert({
         profile_id: profileId,
         event_type: eventType,
         user_agent: navigator.userAgent,
         referrer: document.referrer || null,
-      });
+      }).select();
+
+      if (error) {
+        console.error("Analytics insert error:", error.message, error.details);
+      } else {
+        console.log("Analytics tracked successfully:", data);
+      }
     } catch (error) {
       console.error("Analytics error:", error);
     }
