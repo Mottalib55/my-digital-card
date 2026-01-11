@@ -535,8 +535,8 @@ const Dashboard = () => {
               <Briefcase size={20} className="text-slate-400" />
               <h2 className="font-semibold text-slate-900">Professional</h2>
             </div>
-            {renderFieldGroup("Messaging", messagingFields)}
             {renderFieldGroup("Professional networks", professionalFields)}
+            {renderFieldGroup("Messaging", messagingFields)}
           </div>
 
           {/* Section: Réseaux Sociaux */}
