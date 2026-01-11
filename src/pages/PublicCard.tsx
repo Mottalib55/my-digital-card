@@ -82,6 +82,8 @@ const PublicCard = () => {
     if (error || !data) {
       setNotFound(true);
     } else {
+      console.log("Profile data:", data);
+      console.log("WhatsApp:", data.whatsapp, "Enabled:", data.whatsapp_enabled);
       setProfile(data);
     }
     setLoading(false);
@@ -184,7 +186,13 @@ END:VCARD`.replace(/\n{2,}/g, "\n");
       label: "Telegram",
       href: getTelegramLink(profile.telegram || ""),
     },
-  ].filter((link) => isFieldActive(link.value, link.enabled));
+  ].filter((link) => {
+    const active = isFieldActive(link.value, link.enabled);
+    if (link.key === "whatsapp") {
+      console.log("WhatsApp filter:", { value: link.value, enabled: link.enabled, active });
+    }
+    return active;
+  });
 
   const hasName = profile.first_name || profile.last_name;
   const hasContactInfo =
