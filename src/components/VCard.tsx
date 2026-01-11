@@ -47,6 +47,26 @@ const VCard = () => {
           <span>+33 6 12 34 56 78</span>
         </a>
 
+        {/* Email */}
+        <a 
+          href="mailto:contact@example.com" 
+          className="vcard-phone animate-fade-in-delay-2"
+        >
+          <Mail size={18} />
+          <span>contact@example.com</span>
+        </a>
+
+        {/* LinkedIn */}
+        <a 
+          href="https://linkedin.com/in/jeandupont" 
+          target="_blank"
+          rel="noopener noreferrer"
+          className="vcard-phone animate-fade-in-delay-2"
+        >
+          <Linkedin size={18} />
+          <span>linkedin.com/in/jeandupont</span>
+        </a>
+
         {/* Réseaux Sociaux */}
         <div className="flex gap-3 mt-8 animate-fade-in-delay-3">
           {socialLinks.map((link, index) => (
