@@ -107,8 +107,11 @@ const Dashboard = () => {
       avatarUrl = data.publicUrl;
     }
 
+    // Only update editable fields, exclude id, user_id, username, created_at
+    const { id, user_id, username, created_at, ...editableFields } = profile as any;
+
     const updateData = {
-      ...profile,
+      ...editableFields,
       avatar_url: avatarUrl,
       updated_at: new Date().toISOString(),
     };
