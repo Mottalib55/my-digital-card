@@ -120,8 +120,7 @@ const Dashboard = () => {
   };
 
   const getCardUrl = () => {
-    const base = window.location.href.split('#')[0];
-    return `${base}#/card/${profile.username}`;
+    return `${window.location.origin}${import.meta.env.BASE_URL}#/card/${profile.username}`;
   };
 
   const copyLink = () => {
