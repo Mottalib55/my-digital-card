@@ -2,14 +2,17 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   Instagram, Linkedin, Twitter, Github, Facebook, Youtube,
-  Mail, Phone, UserPlus, Globe, MessageCircle, Send, Music2, Camera, QrCode, Download
+  Mail, Phone, UserPlus, Globe, MessageCircle, Send, Music2, Camera, QrCode, Download,
+  LayoutDashboard, LogIn, UserPlus as UserPlusIcon
 } from "lucide-react";
 import { QRCodeCanvas } from "qrcode.react";
 import { supabase, Profile } from "@/lib/supabase";
+import { useAuth } from "@/contexts/AuthContext";
 
 const PublicCard = () => {
   const { username } = useParams();
   const navigate = useNavigate();
+  const { user, loading: authLoading } = useAuth();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
@@ -190,8 +193,40 @@ END:VCARD`.replace(/\n{2,}/g, "\n");
     isFieldActive(profile.website, profile.website_enabled);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center p-6">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 p-6">
+      {/* Navigation */}
+      {!authLoading && (
+        <div className="max-w-md mx-auto mb-4">
+          {user ? (
+            <button
+              onClick={() => navigate("/dashboard")}
+              className="flex items-center gap-2 text-slate-600 hover:text-slate-900 bg-white px-4 py-2 rounded-xl shadow-sm hover:shadow transition-all"
+            >
+              <LayoutDashboard size={18} />
+              Mon Dashboard
+            </button>
+          ) : (
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => navigate("/login")}
+                className="flex items-center gap-2 text-slate-600 hover:text-slate-900 bg-white px-4 py-2 rounded-xl shadow-sm hover:shadow transition-all"
+              >
+                <LogIn size={18} />
+                Connexion
+              </button>
+              <button
+                onClick={() => navigate("/register")}
+                className="flex items-center gap-2 text-white bg-slate-900 hover:bg-slate-800 px-4 py-2 rounded-xl shadow-sm hover:shadow transition-all"
+              >
+                <UserPlusIcon size={18} />
+                Créer ma carte
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      <div className="w-full max-w-md mx-auto">
         <div className="bg-white rounded-3xl shadow-xl p-8">
           {/* Avatar */}
           <div className="flex justify-center mb-6">
