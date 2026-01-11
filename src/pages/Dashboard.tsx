@@ -107,13 +107,17 @@ const Dashboard = () => {
       avatarUrl = data.publicUrl;
     }
 
+    const updateData = {
+      ...profile,
+      avatar_url: avatarUrl,
+      updated_at: new Date().toISOString(),
+    };
+    console.log("Saving profile:", updateData);
+    console.log("WhatsApp value:", updateData.whatsapp);
+
     const { error: updateError } = await supabase
       .from("profiles")
-      .update({
-        ...profile,
-        avatar_url: avatarUrl,
-        updated_at: new Date().toISOString(),
-      })
+      .update(updateData)
       .eq("user_id", user.id);
 
     if (updateError) {
