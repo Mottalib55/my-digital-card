@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   Instagram, Linkedin, Twitter, Github, Facebook, Youtube,
-  Mail, Phone, UserPlus, Globe, MessageCircle, Send, Music2, Camera
+  Mail, Phone, UserPlus, Globe, MessageCircle, Send, Music2, Camera, QrCode
 } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
 import { supabase, Profile } from "@/lib/supabase";
 
 const PublicCard = () => {
@@ -302,6 +303,24 @@ END:VCARD`.replace(/\n{2,}/g, "\n");
               ))}
             </div>
           )}
+
+          {/* QR Code */}
+          <div className="mt-8 pt-6 border-t border-slate-100">
+            <div className="flex flex-col items-center">
+              <div className="bg-white p-4 rounded-2xl shadow-inner border border-slate-100">
+                <QRCodeSVG
+                  value={`${window.location.origin}${import.meta.env.BASE_URL}#/card/${username}`}
+                  size={120}
+                  level="M"
+                  includeMargin={false}
+                />
+              </div>
+              <p className="text-xs text-slate-400 mt-3 flex items-center gap-1">
+                <QrCode size={14} />
+                Scannez pour partager
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Footer */}
