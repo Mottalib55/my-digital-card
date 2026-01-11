@@ -306,11 +306,14 @@ END:VCARD`.replace(/\n{2,}/g, "\n");
 
           {/* Titre & Entreprise */}
           {(profile.title || profile.company) && (
-            <p className="text-slate-500 text-center mb-4">
-              {profile.title}
-              {profile.title && profile.company && " · "}
-              {profile.company}
-            </p>
+            <div className="text-center mb-4">
+              {profile.title && (
+                <p className="text-slate-600 font-medium">{profile.title}</p>
+              )}
+              {profile.company && (
+                <p className="text-slate-500">{profile.company}</p>
+              )}
+            </div>
           )}
 
           {/* Bio */}
