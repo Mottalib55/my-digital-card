@@ -1,4 +1,4 @@
-import { Instagram, Linkedin, Twitter, Github, Mail, Phone } from "lucide-react";
+import { Instagram, Linkedin, Twitter, Github, Mail, Phone, UserPlus } from "lucide-react";
 import avatar from "@/assets/avatar.jpg";
 
 interface SocialLink {
@@ -8,12 +8,37 @@ interface SocialLink {
 }
 
 const socialLinks: SocialLink[] = [
-  { icon: <Linkedin size={20} />, href: "https://linkedin.com", label: "LinkedIn" },
   { icon: <Twitter size={20} />, href: "https://twitter.com", label: "Twitter" },
   { icon: <Instagram size={20} />, href: "https://instagram.com", label: "Instagram" },
   { icon: <Github size={20} />, href: "https://github.com", label: "GitHub" },
-  { icon: <Mail size={20} />, href: "mailto:contact@example.com", label: "Email" },
 ];
+
+const contactInfo = {
+  firstName: "Jean",
+  lastName: "Dupont",
+  phone: "+33612345678",
+  email: "contact@example.com",
+  linkedin: "https://linkedin.com/in/jeandupont",
+};
+
+const generateVCard = () => {
+  const vcard = `BEGIN:VCARD
+VERSION:3.0
+FN:${contactInfo.firstName} ${contactInfo.lastName}
+N:${contactInfo.lastName};${contactInfo.firstName};;;
+TEL;TYPE=CELL:${contactInfo.phone}
+EMAIL:${contactInfo.email}
+URL:${contactInfo.linkedin}
+END:VCARD`;
+
+  const blob = new Blob([vcard], { type: "text/vcard" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `${contactInfo.firstName}_${contactInfo.lastName}.vcf`;
+  link.click();
+  URL.revokeObjectURL(url);
+};
 
 const VCard = () => {
   return (
@@ -67,8 +92,17 @@ const VCard = () => {
           <span>linkedin.com/in/jeandupont</span>
         </a>
 
+        {/* Bouton Ajouter aux contacts */}
+        <button 
+          onClick={generateVCard}
+          className="vcard-add-contact animate-fade-in-delay-3"
+        >
+          <UserPlus size={20} />
+          <span>Ajouter aux contacts</span>
+        </button>
+
         {/* Réseaux Sociaux */}
-        <div className="flex gap-3 mt-8 animate-fade-in-delay-3">
+        <div className="flex gap-3 mt-6 animate-fade-in-delay-3">
           {socialLinks.map((link, index) => (
             <a
               key={index}
