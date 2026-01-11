@@ -16,6 +16,7 @@ interface SocialField {
 interface FieldConfig {
   key: string;
   dbKey: string;
+  enabledKey?: string; // Optional: use when enabled key differs from dbKey
   label: string;
   icon: React.ReactNode;
   placeholder: string;
@@ -143,7 +144,7 @@ const Dashboard = () => {
 
   const contactFields: FieldConfig[] = [
     { key: "phone", dbKey: "phone", label: "Phone", icon: <Phone size={18} />, placeholder: "+1 555 123 4567", type: "tel" },
-    { key: "email", dbKey: "email_contact", label: "Email", icon: <Mail size={18} />, placeholder: "contact@example.com", type: "email" },
+    { key: "email", dbKey: "email_contact", enabledKey: "email", label: "Email", icon: <Mail size={18} />, placeholder: "contact@example.com", type: "email" },
     { key: "website", dbKey: "website", label: "Website", icon: <Globe size={18} />, placeholder: "https://mysite.com", type: "url" },
   ];
 
@@ -175,7 +176,8 @@ const Dashboard = () => {
       <div className="space-y-2">
         {fields.map((field) => {
           const value = (profile as any)[field.dbKey] || "";
-          const enabled = (profile as any)[`${field.dbKey}_enabled`] ?? false;
+          const enabledFieldKey = field.enabledKey ? `${field.enabledKey}_enabled` : `${field.dbKey}_enabled`;
+          const enabled = (profile as any)[enabledFieldKey] ?? false;
           return (
             <div
               key={field.key}
@@ -185,7 +187,7 @@ const Dashboard = () => {
             >
               <button
                 type="button"
-                onClick={() => handleChange(`${field.dbKey}_enabled`, !enabled)}
+                onClick={() => handleChange(enabledFieldKey, !enabled)}
                 className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
                   enabled ? "bg-slate-900 text-white" : "bg-slate-200 text-slate-400"
                 }`}
@@ -209,7 +211,7 @@ const Dashboard = () => {
                 <input
                   type="checkbox"
                   checked={enabled}
-                  onChange={() => handleChange(`${field.dbKey}_enabled`, !enabled)}
+                  onChange={() => handleChange(enabledFieldKey, !enabled)}
                   className="sr-only peer"
                 />
                 <div className="w-9 h-5 bg-slate-200 peer-focus:ring-2 peer-focus:ring-slate-300 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-slate-900"></div>
