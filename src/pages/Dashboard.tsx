@@ -120,7 +120,7 @@ const Dashboard = () => {
   };
 
   const copyLink = () => {
-    const link = `${window.location.origin}/#/card/${profile.username}`;
+    const link = `${window.location.origin}${window.location.pathname}#/card/${profile.username}`;
     navigator.clipboard.writeText(link);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -227,7 +227,7 @@ const Dashboard = () => {
           </div>
           <div className="flex items-center gap-3">
             <button
-              onClick={() => window.open(`/#/card/${profile.username}`, "_blank")}
+              onClick={() => window.open(`${window.location.origin}${window.location.pathname}#/card/${profile.username}`, "_blank")}
               className="flex items-center gap-2 text-slate-600 hover:text-slate-900 transition-colors"
             >
               <ExternalLink size={18} />
@@ -250,7 +250,7 @@ const Dashboard = () => {
           <h2 className="font-semibold mb-2">Votre lien de carte</h2>
           <div className="flex items-center gap-2 bg-white/20 backdrop-blur rounded-xl p-3">
             <span className="flex-1 text-sm truncate">
-              {window.location.origin}/#/card/{profile.username}
+              {window.location.origin}{window.location.pathname}#/card/{profile.username}
             </span>
             <button
               onClick={copyLink}
