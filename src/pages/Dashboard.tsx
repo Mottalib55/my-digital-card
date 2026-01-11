@@ -4,9 +4,12 @@ import {
   Save, LogOut, Upload, User, Phone, Mail, Briefcase, ExternalLink,
   Linkedin, Twitter, Instagram, Github, Facebook, Youtube,
   Globe, MessageCircle, Send, Music2, Camera, Link, Copy, Check, CreditCard,
-  QrCode, Download, X, Eye, UserCheck, BarChart3
+  QrCode, Download, X, Eye, UserCheck, BarChart3, TrendingUp
 } from "lucide-react";
 import { QRCodeCanvas } from "qrcode.react";
+import {
+  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
+} from "recharts";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase, Profile } from "@/lib/supabase";
 
@@ -32,6 +35,14 @@ interface AnalyticsData {
   linkedin_clicks: number;
 }
 
+interface ChartDataPoint {
+  date: string;
+  views: number;
+  contacts: number;
+  whatsapp: number;
+  linkedin: number;
+}
+
 const Dashboard = () => {
   const navigate = useNavigate();
   const { user, loading: authLoading, signOut } = useAuth();
@@ -50,6 +61,7 @@ const Dashboard = () => {
     whatsapp_clicks: 0,
     linkedin_clicks: 0,
   });
+  const [chartData, setChartData] = useState<ChartDataPoint[]>([]);
 
   useEffect(() => {
     if (authLoading) return; // Wait for auth to load
@@ -83,7 +95,7 @@ const Dashboard = () => {
   const loadAnalytics = async (profileId: string) => {
     const { data, error } = await supabase
       .from("analytics")
-      .select("event_type")
+      .select("event_type, created_at")
       .eq("profile_id", profileId);
 
     if (error) {
@@ -92,6 +104,7 @@ const Dashboard = () => {
     }
 
     if (data) {
+      // Calculate totals
       const counts = {
         views: data.filter((e) => e.event_type === "view").length,
         contacts_saved: data.filter((e) => e.event_type === "contact_saved").length,
@@ -99,6 +112,24 @@ const Dashboard = () => {
         linkedin_clicks: data.filter((e) => e.event_type === "linkedin_click").length,
       };
       setAnalytics(counts);
+
+      // Generate chart data for last 7 days
+      const last7Days: ChartDataPoint[] = [];
+      for (let i = 6; i >= 0; i--) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        const dateStr = date.toISOString().split("T")[0];
+        const dayEvents = data.filter((e) => e.created_at?.startsWith(dateStr));
+
+        last7Days.push({
+          date: date.toLocaleDateString("en-US", { weekday: "short", day: "numeric" }),
+          views: dayEvents.filter((e) => e.event_type === "view").length,
+          contacts: dayEvents.filter((e) => e.event_type === "contact_saved").length,
+          whatsapp: dayEvents.filter((e) => e.event_type === "whatsapp_click").length,
+          linkedin: dayEvents.filter((e) => e.event_type === "linkedin_click").length,
+        });
+      }
+      setChartData(last7Days);
     }
   };
 
@@ -412,6 +443,115 @@ const Dashboard = () => {
               </div>
               <p className="text-2xl font-bold text-sky-600">{analytics.linkedin_clicks}</p>
               <p className="text-xs text-sky-500 font-medium">LinkedIn Clicks</p>
+            </div>
+          </div>
+
+          {/* Activity Chart */}
+          <div className="mt-6 pt-6 border-t border-slate-100">
+            <div className="flex items-center gap-2 mb-4">
+              <TrendingUp size={18} className="text-slate-400" />
+              <h3 className="font-medium text-slate-700">Last 7 Days Activity</h3>
+            </div>
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="colorViews" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#3B82F6" stopOpacity={0}/>
+                    </linearGradient>
+                    <linearGradient id="colorContacts" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#22C55E" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#22C55E" stopOpacity={0}/>
+                    </linearGradient>
+                    <linearGradient id="colorWhatsapp" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#25D366" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#25D366" stopOpacity={0}/>
+                    </linearGradient>
+                    <linearGradient id="colorLinkedin" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#0A66C2" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#0A66C2" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
+                  <XAxis
+                    dataKey="date"
+                    tick={{ fontSize: 12, fill: '#64748B' }}
+                    axisLine={{ stroke: '#E2E8F0' }}
+                    tickLine={false}
+                  />
+                  <YAxis
+                    tick={{ fontSize: 12, fill: '#64748B' }}
+                    axisLine={false}
+                    tickLine={false}
+                    allowDecimals={false}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#FFFFFF',
+                      border: '1px solid #E2E8F0',
+                      borderRadius: '12px',
+                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                    }}
+                    labelStyle={{ fontWeight: 600, color: '#1E293B' }}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="views"
+                    name="Views"
+                    stroke="#3B82F6"
+                    strokeWidth={2}
+                    fillOpacity={1}
+                    fill="url(#colorViews)"
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="contacts"
+                    name="Contacts"
+                    stroke="#22C55E"
+                    strokeWidth={2}
+                    fillOpacity={1}
+                    fill="url(#colorContacts)"
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="whatsapp"
+                    name="WhatsApp"
+                    stroke="#25D366"
+                    strokeWidth={2}
+                    fillOpacity={1}
+                    fill="url(#colorWhatsapp)"
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="linkedin"
+                    name="LinkedIn"
+                    stroke="#0A66C2"
+                    strokeWidth={2}
+                    fillOpacity={1}
+                    fill="url(#colorLinkedin)"
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+            {/* Legend */}
+            <div className="flex flex-wrap justify-center gap-4 mt-4">
+              <div className="flex items-center gap-1.5">
+                <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                <span className="text-xs text-slate-600">Views</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                <span className="text-xs text-slate-600">Contacts</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <div className="w-3 h-3 rounded-full bg-[#25D366]"></div>
+                <span className="text-xs text-slate-600">WhatsApp</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <div className="w-3 h-3 rounded-full bg-[#0A66C2]"></div>
+                <span className="text-xs text-slate-600">LinkedIn</span>
+              </div>
             </div>
           </div>
         </div>
