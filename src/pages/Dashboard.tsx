@@ -208,8 +208,6 @@ const Dashboard = () => {
       avatar_url: avatarUrl,
       updated_at: new Date().toISOString(),
     };
-    console.log("Saving profile:", updateData);
-    console.log("WhatsApp value:", updateData.whatsapp);
 
     const { error: updateError } = await supabase
       .from("profiles")

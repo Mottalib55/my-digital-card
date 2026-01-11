@@ -66,7 +66,6 @@ const PublicCard = () => {
   // Track analytics event
   const trackEvent = async (eventType: string, profileId: string) => {
     if (profileId === "demo") return; // Don't track demo profile
-    console.log("Tracking event:", eventType, "for profile:", profileId);
     try {
       const { data, error } = await supabase.from("analytics").insert({
         profile_id: profileId,
@@ -77,8 +76,6 @@ const PublicCard = () => {
 
       if (error) {
         console.error("Analytics insert error:", error.message, error.details);
-      } else {
-        console.log("Analytics tracked successfully:", data);
       }
     } catch (error) {
       console.error("Analytics error:", error);
@@ -158,8 +155,6 @@ const PublicCard = () => {
     if (error || !data) {
       setNotFound(true);
     } else {
-      console.log("Profile data:", data);
-      console.log("WhatsApp:", data.whatsapp, "Enabled:", data.whatsapp_enabled);
       setProfile(data);
     }
     setLoading(false);
@@ -265,13 +260,7 @@ END:VCARD`.replace(/\n{2,}/g, "\n");
       label: "Telegram",
       href: getTelegramLink(profile.telegram || ""),
     },
-  ].filter((link) => {
-    const active = isFieldActive(link.value, link.enabled);
-    if (link.key === "whatsapp") {
-      console.log("WhatsApp filter:", { value: link.value, enabled: link.enabled, active });
-    }
-    return active;
-  });
+  ].filter((link) => isFieldActive(link.value, link.enabled));
 
   const hasName = profile.first_name || profile.last_name;
   const hasContactInfo =
