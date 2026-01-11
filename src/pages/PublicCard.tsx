@@ -203,7 +203,7 @@ END:VCARD`.replace(/\n{2,}/g, "\n");
               className="flex items-center gap-2 text-slate-600 hover:text-slate-900 bg-white px-4 py-2 rounded-xl shadow-sm hover:shadow transition-all"
             >
               <LayoutDashboard size={18} />
-              Mon Dashboard
+              My Dashboard
             </button>
           ) : (
             <div className="flex items-center gap-3">
@@ -212,14 +212,14 @@ END:VCARD`.replace(/\n{2,}/g, "\n");
                 className="flex items-center gap-2 text-slate-600 hover:text-slate-900 bg-white px-4 py-2 rounded-xl shadow-sm hover:shadow transition-all"
               >
                 <LogIn size={18} />
-                Connexion
+                Login
               </button>
               <button
                 onClick={() => navigate("/register")}
                 className="flex items-center gap-2 text-white bg-slate-900 hover:bg-slate-800 px-4 py-2 rounded-xl shadow-sm hover:shadow transition-all"
               >
                 <UserPlusIcon size={18} />
-                Créer ma carte gratuitement
+                Create my card for free
               </button>
             </div>
           )}
