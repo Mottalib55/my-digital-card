@@ -3,7 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import {
   Instagram, Linkedin, Github, Facebook, Youtube,
   Mail, Phone, UserPlus, Globe, QrCode, Download,
-  LayoutDashboard, LogIn, UserPlus as UserPlusIcon, ArrowLeft, Share2
+  LayoutDashboard, LogIn, UserPlus as UserPlusIcon, ArrowLeft, Share2,
+  Smartphone, X, Plus, MoreVertical
 } from "lucide-react";
 
 // Custom SVG icons for social platforms
@@ -63,6 +64,12 @@ const PublicCard = () => {
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [viewTracked, setViewTracked] = useState(false);
+  const [showAddToHome, setShowAddToHome] = useState(false);
+
+  // Detect device type
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  const isAndroid = /Android/.test(navigator.userAgent);
+  const isMobile = isIOS || isAndroid;
 
   // Track analytics event
   const trackEvent = async (eventType: string, profileId: string) => {
@@ -384,14 +391,142 @@ END:VCARD`.replace(/\n{2,}/g, "\n");
 
       <div className="w-full max-w-md mx-auto">
         <div className="bg-white rounded-3xl shadow-xl p-8 relative">
-          {/* Share Button */}
-          <button
-            onClick={handleShare}
-            className="absolute top-4 right-4 p-2.5 bg-slate-100 hover:bg-slate-200 rounded-full transition-colors"
-            title="Share this card"
-          >
-            <Share2 size={20} className="text-slate-600" />
-          </button>
+          {/* Action Buttons */}
+          <div className="absolute top-4 right-4 flex items-center gap-2">
+            <button
+              onClick={() => setShowAddToHome(true)}
+              className="p-2.5 bg-slate-100 hover:bg-slate-200 rounded-full transition-colors"
+              title="Add to Home Screen"
+            >
+              <Smartphone size={20} className="text-slate-600" />
+            </button>
+            <button
+              onClick={handleShare}
+              className="p-2.5 bg-slate-100 hover:bg-slate-200 rounded-full transition-colors"
+              title="Share this card"
+            >
+              <Share2 size={20} className="text-slate-600" />
+            </button>
+          </div>
+
+          {/* Add to Home Screen Modal */}
+          {showAddToHome && (
+            <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setShowAddToHome(false)}>
+              <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl" onClick={(e) => e.stopPropagation()}>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <Smartphone className="w-5 h-5 text-slate-700" />
+                    <h3 className="text-lg font-semibold text-slate-900">Add to Home Screen</h3>
+                  </div>
+                  <button
+                    onClick={() => setShowAddToHome(false)}
+                    className="p-1 hover:bg-slate-100 rounded-lg transition-colors"
+                  >
+                    <X size={20} className="text-slate-500" />
+                  </button>
+                </div>
+
+                <p className="text-slate-600 text-sm mb-5">
+                  Save this card to your home screen for quick access, just like an app.
+                </p>
+
+                {isIOS ? (
+                  <div className="space-y-4">
+                    <div className="flex items-start gap-3 p-3 bg-slate-50 rounded-xl">
+                      <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <span className="text-white text-lg">1</span>
+                      </div>
+                      <div>
+                        <p className="font-medium text-slate-900">Tap the Share button</p>
+                        <p className="text-sm text-slate-500 flex items-center gap-1">
+                          Look for <span className="inline-flex items-center justify-center w-6 h-6 bg-slate-200 rounded">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                              <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+                              <polyline points="16 6 12 2 8 6"/>
+                              <line x1="12" y1="2" x2="12" y2="15"/>
+                            </svg>
+                          </span> in Safari
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3 p-3 bg-slate-50 rounded-xl">
+                      <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <span className="text-white text-lg">2</span>
+                      </div>
+                      <div>
+                        <p className="font-medium text-slate-900">Tap "Add to Home Screen"</p>
+                        <p className="text-sm text-slate-500 flex items-center gap-1">
+                          Look for <Plus size={14} className="inline" /> Add to Home Screen
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3 p-3 bg-slate-50 rounded-xl">
+                      <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <span className="text-white text-lg">3</span>
+                      </div>
+                      <div>
+                        <p className="font-medium text-slate-900">Tap "Add"</p>
+                        <p className="text-sm text-slate-500">The card will appear on your home screen</p>
+                      </div>
+                    </div>
+                  </div>
+                ) : isAndroid ? (
+                  <div className="space-y-4">
+                    <div className="flex items-start gap-3 p-3 bg-slate-50 rounded-xl">
+                      <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <span className="text-white text-lg">1</span>
+                      </div>
+                      <div>
+                        <p className="font-medium text-slate-900">Tap the menu button</p>
+                        <p className="text-sm text-slate-500 flex items-center gap-1">
+                          Look for <MoreVertical size={14} className="inline" /> in Chrome
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3 p-3 bg-slate-50 rounded-xl">
+                      <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <span className="text-white text-lg">2</span>
+                      </div>
+                      <div>
+                        <p className="font-medium text-slate-900">Tap "Add to Home screen"</p>
+                        <p className="text-sm text-slate-500">Or "Install app"</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3 p-3 bg-slate-50 rounded-xl">
+                      <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <span className="text-white text-lg">3</span>
+                      </div>
+                      <div>
+                        <p className="font-medium text-slate-900">Confirm</p>
+                        <p className="text-sm text-slate-500">The card will appear on your home screen</p>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="p-4 bg-slate-50 rounded-xl text-center">
+                      <p className="text-slate-600 text-sm">
+                        Open this page on your mobile device to add it to your home screen.
+                      </p>
+                      <button
+                        onClick={handleShare}
+                        className="mt-3 px-4 py-2 bg-slate-900 text-white rounded-lg text-sm font-medium hover:bg-slate-800 transition-colors"
+                      >
+                        Share link to mobile
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                <button
+                  onClick={() => setShowAddToHome(false)}
+                  className="w-full mt-5 py-2.5 bg-slate-100 hover:bg-slate-200 rounded-xl font-medium text-slate-700 transition-colors"
+                >
+                  Got it
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Avatar */}
           <div className="flex justify-center mb-6">
