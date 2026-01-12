@@ -271,17 +271,29 @@ END:VCARD`.replace(/\n{2,}/g, "\n");
 
   const fullName = `${profile.first_name || ""} ${profile.last_name || ""}`.trim();
   const seoDescription = profile.bio
-    ? `${fullName} - ${profile.title || ""}${profile.company ? ` chez ${profile.company}` : ""}. ${profile.bio.substring(0, 100)}...`
-    : `Carte de visite digitale de ${fullName}${profile.title ? ` - ${profile.title}` : ""}${profile.company ? ` chez ${profile.company}` : ""}`;
+    ? `${fullName}${profile.title ? ` - ${profile.title}` : ""}${profile.company ? ` chez ${profile.company}` : ""}. ${profile.bio.substring(0, 120)}`
+    : `Carte de visite digitale de ${fullName}${profile.title ? ` - ${profile.title}` : ""}${profile.company ? ` chez ${profile.company}` : ""}. Contactez-moi facilement via ma carte professionnelle en ligne.`;
+
+  const seoKeywords = [
+    fullName,
+    profile.title,
+    profile.company,
+    "carte visite digitale",
+    "contact professionnel",
+    "vcard",
+    username,
+  ].filter(Boolean).join(", ");
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 p-6">
       <SEO
-        title={`${fullName} - Carte de visite digitale`}
+        title={`${fullName}${profile.title ? ` - ${profile.title}` : ""} | Carte de visite digitale`}
         description={seoDescription}
+        keywords={seoKeywords}
         url={`https://75tools.fr/card/${username}`}
         type="profile"
-        image={profile.avatar_url || undefined}
+        image={profile.avatar_url || "https://75tools.fr/og-image.svg"}
+        imageAlt={`Carte de visite digitale de ${fullName}`}
         jsonLd={{
           "@context": "https://schema.org",
           "@type": "Person",
@@ -290,6 +302,15 @@ END:VCARD`.replace(/\n{2,}/g, "\n");
           worksFor: profile.company ? { "@type": "Organization", name: profile.company } : undefined,
           url: `https://75tools.fr/card/${username}`,
           image: profile.avatar_url || undefined,
+          email: profile.email_enabled ? profile.email_contact : undefined,
+          telephone: profile.phone_enabled ? profile.phone : undefined,
+          sameAs: [
+            profile.linkedin_enabled && profile.linkedin,
+            profile.twitter_enabled && profile.twitter,
+            profile.instagram_enabled && profile.instagram,
+            profile.github_enabled && profile.github,
+            profile.website_enabled && profile.website,
+          ].filter(Boolean),
         }}
       />
       {/* Back to MyCard */}

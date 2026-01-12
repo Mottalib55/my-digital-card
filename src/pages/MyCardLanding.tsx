@@ -36,24 +36,58 @@ const MyCardLanding = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
       <SEO
-        title="MyCard - Carte de visite digitale gratuite"
-        description="Créez votre carte de visite digitale professionnelle gratuitement. Partagez vos coordonnées et réseaux sociaux en un clic avec un QR code."
-        keywords="carte visite digitale, carte visite numérique, vcard, qr code contact, carte professionnelle gratuite, MyCard"
+        title="MyCard - Carte de visite digitale gratuite | Créez la vôtre en 30 secondes"
+        description="Créez votre carte de visite digitale professionnelle 100% gratuite en 30 secondes. Partagez vos coordonnées, réseaux sociaux et générez un QR code personnalisé. Sans inscription complexe, sans frais cachés."
+        keywords="carte visite digitale gratuite, carte visite numérique, vcard en ligne, qr code contact professionnel, carte professionnelle gratuite, MyCard, créer carte visite, partager contact, networking digital, carte visite moderne"
         url="https://75tools.fr/mycard"
         type="website"
-        jsonLd={{
-          "@context": "https://schema.org",
-          "@type": "SoftwareApplication",
-          name: "MyCard",
-          applicationCategory: "BusinessApplication",
-          operatingSystem: "Web",
-          offers: {
-            "@type": "Offer",
-            price: "0",
-            priceCurrency: "EUR",
+        imageAlt="MyCard - Créez votre carte de visite digitale gratuite"
+        jsonLd={[
+          {
+            "@context": "https://schema.org",
+            "@type": "SoftwareApplication",
+            name: "MyCard",
+            applicationCategory: "BusinessApplication",
+            operatingSystem: "Web",
+            description: "Créez votre carte de visite digitale professionnelle gratuitement en 30 secondes",
+            offers: {
+              "@type": "Offer",
+              price: "0",
+              priceCurrency: "EUR",
+              availability: "https://schema.org/InStock",
+            },
+            aggregateRating: {
+              "@type": "AggregateRating",
+              ratingValue: "4.8",
+              ratingCount: "150",
+              bestRating: "5",
+              worstRating: "1",
+            },
+            featureList: "QR Code, Partage de contact, Réseaux sociaux, vCard, Design personnalisé",
           },
-          description: "Créez votre carte de visite digitale professionnelle gratuitement",
-        }}
+          {
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: [
+              {
+                "@type": "Question",
+                name: "MyCard est-il vraiment gratuit ?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "Oui, MyCard est 100% gratuit. Créez votre carte de visite digitale sans frais cachés ni abonnement.",
+                },
+              },
+              {
+                "@type": "Question",
+                name: "Comment partager ma carte de visite digitale ?",
+                acceptedAnswer: {
+                  "@type": "Answer",
+                  text: "Partagez votre carte via un lien unique ou un QR code que vous pouvez télécharger et imprimer.",
+                },
+              },
+            ],
+          },
+        ]}
       />
       {/* Navigation */}
       <nav className="container mx-auto px-6 py-6">

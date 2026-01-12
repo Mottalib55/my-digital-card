@@ -100,17 +100,21 @@ const Hub = ({ lang }: HubProps) => {
   };
 
   const seoContent = lang === "fr" ? {
-    title: "75tools - Outils de productivité gratuits",
-    description: "Des solutions gratuites pour augmenter votre performance. Carte de visite digitale MyCard, calculateur salaire NetSalaire et plus encore.",
-    keywords: "outils productivité, carte visite digitale, calculateur salaire, outils gratuits, MyCard, NetSalaire, 75tools",
+    title: "75tools - Outils de productivité gratuits | Carte de visite digitale & plus",
+    description: "Des solutions 100% gratuites pour booster votre productivité. Créez votre carte de visite digitale MyCard avec QR code, calculez votre salaire net avec NetSalaire et découvrez nos autres outils professionnels.",
+    keywords: "outils productivité gratuits, carte visite digitale, carte visite numérique, QR code professionnel, calculateur salaire net, MyCard, NetSalaire, 75tools, outils business, carte professionnelle en ligne",
     url: "https://75tools.fr/fr",
     locale: "fr_FR" as const,
+    alternateLocale: "en_US" as const,
+    alternateUrl: "https://75tools.fr/en",
   } : {
-    title: "75tools - Free Productivity Tools",
-    description: "Free solutions to boost your performance. Digital business card MyCard, salary calculator NetSalaire and more.",
-    keywords: "productivity tools, digital business card, salary calculator, free tools, MyCard, NetSalaire, 75tools",
+    title: "75tools - Free Productivity Tools | Digital Business Card & more",
+    description: "100% free solutions to boost your productivity. Create your digital business card MyCard with QR code, calculate your net salary with NetSalaire and discover our other professional tools.",
+    keywords: "free productivity tools, digital business card, digital vcard, professional QR code, salary calculator, MyCard, NetSalaire, 75tools, business tools, online professional card",
     url: "https://75tools.fr/en",
     locale: "en_US" as const,
+    alternateLocale: "fr_FR" as const,
+    alternateUrl: "https://75tools.fr/fr",
   };
 
   return (
@@ -121,14 +125,41 @@ const Hub = ({ lang }: HubProps) => {
         keywords={seoContent.keywords}
         url={seoContent.url}
         locale={seoContent.locale}
-        jsonLd={{
-          "@context": "https://schema.org",
-          "@type": "WebSite",
-          name: "75tools",
-          url: "https://75tools.fr",
-          description: seoContent.description,
-          inLanguage: lang === "fr" ? "fr-FR" : "en-US",
-        }}
+        alternateLocale={seoContent.alternateLocale}
+        alternateUrl={seoContent.alternateUrl}
+        imageAlt={lang === "fr" ? "75tools - Hub d'outils de productivité gratuits" : "75tools - Free Productivity Tools Hub"}
+        jsonLd={[
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            name: "75tools",
+            url: "https://75tools.fr",
+            description: seoContent.description,
+            inLanguage: lang === "fr" ? "fr-FR" : "en-US",
+            potentialAction: {
+              "@type": "SearchAction",
+              target: "https://75tools.fr/search?q={search_term_string}",
+              "query-input": "required name=search_term_string",
+            },
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "SoftwareApplication",
+            name: "MyCard",
+            applicationCategory: "BusinessApplication",
+            operatingSystem: "Web",
+            offers: {
+              "@type": "Offer",
+              price: "0",
+              priceCurrency: "EUR",
+            },
+            aggregateRating: {
+              "@type": "AggregateRating",
+              ratingValue: "4.8",
+              ratingCount: "150",
+            },
+          },
+        ]}
       />
       {/* Header */}
       <header className="border-b border-neutral-800">

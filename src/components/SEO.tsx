@@ -6,71 +6,152 @@ interface SEOProps {
   keywords?: string;
   url?: string;
   image?: string;
+  imageAlt?: string;
   type?: "website" | "article" | "profile";
   locale?: "fr_FR" | "en_US";
+  alternateLocale?: "fr_FR" | "en_US";
+  alternateUrl?: string;
   noindex?: boolean;
-  jsonLd?: object;
+  jsonLd?: object | object[];
+  publishedTime?: string;
+  modifiedTime?: string;
 }
 
 const SEO = ({
-  title = "75tools - Vos outils de productivité",
-  description = "Des solutions gratuites pour augmenter votre performance et éclairer vos décisions professionnelles. Créez votre carte de visite digitale, calculez votre salaire net et plus encore.",
-  keywords = "outils productivité, carte visite digitale, calculateur salaire, outils gratuits, MyCard, NetSalaire, 75tools",
+  title = "75tools - Outils de productivité gratuits",
+  description = "Des solutions gratuites pour augmenter votre performance. Carte de visite digitale MyCard, calculateur salaire NetSalaire et plus d'outils professionnels.",
+  keywords = "outils productivité, carte visite digitale, calculateur salaire, outils gratuits, MyCard, NetSalaire, 75tools, outils professionnels, business tools",
   url = "https://75tools.fr",
   image = "https://75tools.fr/og-image.png",
+  imageAlt = "75tools - Hub d'outils de productivité gratuits",
   type = "website",
   locale = "fr_FR",
+  alternateLocale,
+  alternateUrl,
   noindex = false,
   jsonLd,
+  publishedTime,
+  modifiedTime,
 }: SEOProps) => {
-  const fullTitle = title.includes("75tools") ? title : `${title} | 75tools`;
+  const fullTitle = title.includes("75tools") || title.includes("MyCard")
+    ? title
+    : `${title} | 75tools`;
 
-  const defaultJsonLd = {
+  // Default Organization schema (always included)
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "75tools",
+    url: "https://75tools.fr",
+    logo: "https://75tools.fr/favicon.svg",
+    description: "Hub d'outils de productivité gratuits pour professionnels",
+    sameAs: [],
+  };
+
+  // Default WebSite schema
+  const websiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: "75tools",
     url: "https://75tools.fr",
-    description: "Hub d'outils de productivité gratuits",
-    potentialAction: {
-      "@type": "SearchAction",
-      target: "https://75tools.fr/search?q={search_term_string}",
-      "query-input": "required name=search_term_string",
+    description: description,
+    inLanguage: locale === "fr_FR" ? "fr-FR" : "en-US",
+    publisher: {
+      "@type": "Organization",
+      name: "75tools",
     },
   };
 
+  // Combine schemas
+  const schemas = jsonLd
+    ? (Array.isArray(jsonLd) ? [organizationSchema, ...jsonLd] : [organizationSchema, jsonLd])
+    : [organizationSchema, websiteSchema];
+
   return (
     <Helmet>
-      {/* Basic Meta Tags */}
+      {/* Primary Meta Tags */}
       <title>{fullTitle}</title>
+      <meta name="title" content={fullTitle} />
       <meta name="description" content={description} />
       <meta name="keywords" content={keywords} />
       <meta name="author" content="75tools" />
+      <meta name="creator" content="75tools" />
+      <meta name="publisher" content="75tools" />
       <link rel="canonical" href={url} />
-      {noindex && <meta name="robots" content="noindex, nofollow" />}
 
-      {/* Open Graph */}
+      {/* Language */}
+      <html lang={locale === "fr_FR" ? "fr" : "en"} />
+      <meta httpEquiv="content-language" content={locale === "fr_FR" ? "fr" : "en"} />
+
+      {/* Alternate Languages (hreflang) */}
+      {alternateUrl && alternateLocale && (
+        <>
+          <link rel="alternate" hrefLang={locale === "fr_FR" ? "fr" : "en"} href={url} />
+          <link rel="alternate" hrefLang={alternateLocale === "fr_FR" ? "fr" : "en"} href={alternateUrl} />
+          <link rel="alternate" hrefLang="x-default" href="https://75tools.fr" />
+        </>
+      )}
+
+      {/* Robots */}
+      {noindex ? (
+        <meta name="robots" content="noindex, nofollow" />
+      ) : (
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+      )}
+      <meta name="googlebot" content={noindex ? "noindex, nofollow" : "index, follow"} />
+      <meta name="bingbot" content={noindex ? "noindex, nofollow" : "index, follow"} />
+
+      {/* Open Graph / Facebook */}
+      <meta property="og:type" content={type} />
+      <meta property="og:site_name" content="75tools" />
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={description} />
-      <meta property="og:type" content={type} />
       <meta property="og:url" content={url} />
       <meta property="og:image" content={image} />
+      <meta property="og:image:secure_url" content={image} />
+      <meta property="og:image:type" content="image/png" />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
+      <meta property="og:image:alt" content={imageAlt} />
       <meta property="og:locale" content={locale} />
-      <meta property="og:site_name" content="75tools" />
+      {alternateLocale && <meta property="og:locale:alternate" content={alternateLocale} />}
+
+      {/* Article specific (for blog posts if needed) */}
+      {type === "article" && publishedTime && (
+        <meta property="article:published_time" content={publishedTime} />
+      )}
+      {type === "article" && modifiedTime && (
+        <meta property="article:modified_time" content={modifiedTime} />
+      )}
 
       {/* Twitter Card */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={image} />
+      <meta name="twitter:image:alt" content={imageAlt} />
 
-      {/* Additional SEO */}
-      <meta name="theme-color" content="#3B82F6" />
+      {/* Mobile & PWA */}
+      <meta name="theme-color" content="#0a0a0a" />
+      <meta name="msapplication-TileColor" content="#0a0a0a" />
+      <meta name="apple-mobile-web-app-capable" content="yes" />
+      <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
       <meta name="apple-mobile-web-app-title" content="75tools" />
       <meta name="application-name" content="75tools" />
+      <meta name="mobile-web-app-capable" content="yes" />
+      <meta name="format-detection" content="telephone=no" />
+
+      {/* Geo (France) */}
+      <meta name="geo.region" content="FR" />
+      <meta name="geo.placename" content="France" />
+
+      {/* Verification (add your own codes) */}
+      {/* <meta name="google-site-verification" content="YOUR_CODE" /> */}
+      {/* <meta name="msvalidate.01" content="YOUR_CODE" /> */}
 
       {/* JSON-LD Structured Data */}
       <script type="application/ld+json">
-        {JSON.stringify(jsonLd || defaultJsonLd)}
+        {JSON.stringify(schemas)}
       </script>
     </Helmet>
   );
