@@ -16,20 +16,21 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="75tools - Vos outils de productivité" />
     <meta name="twitter:description" content="Des solutions gratuites pour augmenter votre performance et éclairer vos décisions professionnelles." />
-  </head>
 
-  <body>
-    <div id="root"></div>
+    <!-- GitHub Pages SPA redirect handler - MUST run before React -->
     <script>
-      // GitHub Pages SPA redirect handler
       (function() {
-        var redirect = sessionStorage.getItem('redirect');
+        var redirect = sessionStorage.getItem('spa-redirect');
         if (redirect) {
-          sessionStorage.removeItem('redirect');
+          sessionStorage.removeItem('spa-redirect');
           window.history.replaceState(null, null, redirect);
         }
       })();
     </script>
+  </head>
+
+  <body>
+    <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
