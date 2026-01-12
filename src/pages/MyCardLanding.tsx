@@ -36,12 +36,12 @@ const MyCardLanding = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
       <SEO
-        title="MyCard - Carte de visite digitale gratuite | Créez la vôtre en 30 secondes"
-        description="Créez votre carte de visite digitale professionnelle 100% gratuite en 30 secondes. Partagez vos coordonnées, réseaux sociaux et générez un QR code personnalisé. Sans inscription complexe, sans frais cachés."
-        keywords="carte visite digitale gratuite, carte visite numérique, vcard en ligne, qr code contact professionnel, carte professionnelle gratuite, MyCard, créer carte visite, partager contact, networking digital, carte visite moderne"
+        title="MyCard - Free Digital Business Card | Create Yours in 30 Seconds"
+        description="Create your free professional digital business card in 30 seconds. Share your contact info, social networks and generate a custom QR code. No complex signup, no hidden fees."
+        keywords="free digital business card, digital vcard, online business card, professional qr code contact, free business card, MyCard, create business card, share contact, digital networking, modern business card"
         url="https://75tools.fr/mycard"
         type="website"
-        imageAlt="MyCard - Créez votre carte de visite digitale gratuite"
+        imageAlt="MyCard - Create your free digital business card"
         jsonLd={[
           {
             "@context": "https://schema.org",
@@ -49,11 +49,11 @@ const MyCardLanding = () => {
             name: "MyCard",
             applicationCategory: "BusinessApplication",
             operatingSystem: "Web",
-            description: "Créez votre carte de visite digitale professionnelle gratuitement en 30 secondes",
+            description: "Create your free professional digital business card in 30 seconds",
             offers: {
               "@type": "Offer",
               price: "0",
-              priceCurrency: "EUR",
+              priceCurrency: "USD",
               availability: "https://schema.org/InStock",
             },
             aggregateRating: {
@@ -63,7 +63,7 @@ const MyCardLanding = () => {
               bestRating: "5",
               worstRating: "1",
             },
-            featureList: "QR Code, Partage de contact, Réseaux sociaux, vCard, Design personnalisé",
+            featureList: "QR Code, Contact sharing, Social networks, vCard, Custom design",
           },
           {
             "@context": "https://schema.org",
@@ -71,18 +71,18 @@ const MyCardLanding = () => {
             mainEntity: [
               {
                 "@type": "Question",
-                name: "MyCard est-il vraiment gratuit ?",
+                name: "Is MyCard really free?",
                 acceptedAnswer: {
                   "@type": "Answer",
-                  text: "Oui, MyCard est 100% gratuit. Créez votre carte de visite digitale sans frais cachés ni abonnement.",
+                  text: "Yes, MyCard is 100% free. Create your digital business card with no hidden fees or subscription.",
                 },
               },
               {
                 "@type": "Question",
-                name: "Comment partager ma carte de visite digitale ?",
+                name: "How do I share my digital business card?",
                 acceptedAnswer: {
                   "@type": "Answer",
-                  text: "Partagez votre carte via un lien unique ou un QR code que vous pouvez télécharger et imprimer.",
+                  text: "Share your card via a unique link or QR code that you can download and print.",
                 },
               },
             ],

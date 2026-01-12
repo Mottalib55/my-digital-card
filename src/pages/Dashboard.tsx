@@ -333,8 +333,8 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200">
       <SEO
-        title="Tableau de bord - MyCard"
-        description="Gérez votre carte de visite digitale, consultez vos statistiques et personnalisez votre profil."
+        title="Dashboard - MyCard"
+        description="Manage your digital business card, view your stats and customize your profile."
         url="https://75tools.fr/dashboard"
         noindex={true}
       />
@@ -345,7 +345,7 @@ const Dashboard = () => {
             <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center">
               <CreditCard className="w-5 h-5 text-white" />
             </div>
-            <span className="text-xl font-bold text-slate-900">DigiCard</span>
+            <span className="text-xl font-bold text-slate-900">MyCard</span>
           </div>
           <div className="flex items-center gap-3">
             <button

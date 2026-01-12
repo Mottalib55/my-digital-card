@@ -271,15 +271,15 @@ END:VCARD`.replace(/\n{2,}/g, "\n");
 
   const fullName = `${profile.first_name || ""} ${profile.last_name || ""}`.trim();
   const seoDescription = profile.bio
-    ? `${fullName}${profile.title ? ` - ${profile.title}` : ""}${profile.company ? ` chez ${profile.company}` : ""}. ${profile.bio.substring(0, 120)}`
-    : `Carte de visite digitale de ${fullName}${profile.title ? ` - ${profile.title}` : ""}${profile.company ? ` chez ${profile.company}` : ""}. Contactez-moi facilement via ma carte professionnelle en ligne.`;
+    ? `${fullName}${profile.title ? ` - ${profile.title}` : ""}${profile.company ? ` at ${profile.company}` : ""}. ${profile.bio.substring(0, 120)}`
+    : `Digital business card of ${fullName}${profile.title ? ` - ${profile.title}` : ""}${profile.company ? ` at ${profile.company}` : ""}. Connect with me easily via my online business card.`;
 
   const seoKeywords = [
     fullName,
     profile.title,
     profile.company,
-    "carte visite digitale",
-    "contact professionnel",
+    "digital business card",
+    "professional contact",
     "vcard",
     username,
   ].filter(Boolean).join(", ");
@@ -287,13 +287,13 @@ END:VCARD`.replace(/\n{2,}/g, "\n");
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 p-6">
       <SEO
-        title={`${fullName}${profile.title ? ` - ${profile.title}` : ""} | Carte de visite digitale`}
+        title={`${fullName}${profile.title ? ` - ${profile.title}` : ""} | Digital Business Card`}
         description={seoDescription}
         keywords={seoKeywords}
         url={`https://75tools.fr/card/${username}`}
         type="profile"
         image={profile.avatar_url || "https://75tools.fr/og-image.svg"}
-        imageAlt={`Carte de visite digitale de ${fullName}`}
+        imageAlt={`Digital business card of ${fullName}`}
         jsonLd={{
           "@context": "https://schema.org",
           "@type": "Person",
@@ -519,8 +519,8 @@ END:VCARD`.replace(/\n{2,}/g, "\n");
         {/* Footer */}
         <p className="text-center text-slate-400 text-sm mt-6">
           Create your card on{" "}
-          <button onClick={() => navigate("/")} className="text-slate-600 hover:underline">
-            DigiCard
+          <button onClick={() => navigate("/mycard")} className="text-slate-600 hover:underline">
+            MyCard
           </button>
         </p>
       </div>

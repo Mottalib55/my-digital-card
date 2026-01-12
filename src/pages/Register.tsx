@@ -23,13 +23,13 @@ const Register = () => {
 
     // Validate username
     if (!/^[a-z0-9_]+$/.test(username)) {
-      setError("Le nom d'utilisateur ne peut contenir que des lettres minuscules, chiffres et underscores.");
+      setError("Username can only contain lowercase letters, numbers and underscores.");
       setLoading(false);
       return;
     }
 
     if (username.length < 3) {
-      setError("Le nom d'utilisateur doit contenir au moins 3 caractères.");
+      setError("Username must be at least 3 characters.");
       setLoading(false);
       return;
     }
@@ -42,7 +42,7 @@ const Register = () => {
       .single();
 
     if (existingProfile) {
-      setError("Ce nom d'utilisateur est déjà pris.");
+      setError("This username is already taken.");
       setLoading(false);
       return;
     }
@@ -51,9 +51,9 @@ const Register = () => {
 
     if (signUpError) {
       if (signUpError.message.includes("already registered")) {
-        setError("Cet email est déjà utilisé.");
+        setError("This email is already registered.");
       } else {
-        setError("Une erreur est survenue. Veuillez réessayer.");
+        setError("An error occurred. Please try again.");
       }
       setLoading(false);
       return;
@@ -87,9 +87,9 @@ const Register = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-6">
       <SEO
-        title="Créer votre carte - MyCard"
-        description="Créez gratuitement votre carte de visite digitale en quelques secondes. Partagez vos coordonnées professionnelles avec un QR code."
-        keywords="créer carte visite, carte digitale gratuite, inscription MyCard"
+        title="Create your card - MyCard"
+        description="Create your free digital business card in seconds. Share your contact info with a QR code."
+        keywords="create business card, free digital card, MyCard signup"
         url="https://75tools.fr/register"
         noindex={true}
       />
@@ -100,7 +100,7 @@ const Register = () => {
           className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors mb-8"
         >
           <ArrowLeft size={20} />
-          Retour
+          Back
         </button>
 
         <div className="grid lg:grid-cols-2 gap-8 items-center">
@@ -117,10 +117,10 @@ const Register = () => {
             </div>
 
             <h1 className="text-2xl font-bold text-white text-center mb-2">
-              Créez votre carte
+              Create your card
             </h1>
             <p className="text-slate-400 text-center mb-6">
-              Gratuit et en quelques secondes
+              Free and in seconds
             </p>
 
             {/* Error Message */}
@@ -136,25 +136,25 @@ const Register = () => {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-sm font-medium text-slate-300 mb-1.5">
-                    Prénom
+                    First name
                   </label>
                   <input
                     type="text"
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
-                    placeholder="Jean"
+                    placeholder="John"
                     className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-300 mb-1.5">
-                    Nom
+                    Last name
                   </label>
                   <input
                     type="text"
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
-                    placeholder="Dupont"
+                    placeholder="Doe"
                     className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                   />
                 </div>
@@ -162,7 +162,7 @@ const Register = () => {
 
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-1.5">
-                  Nom d'utilisateur
+                  Username
                 </label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -170,13 +170,13 @@ const Register = () => {
                     type="text"
                     value={username}
                     onChange={(e) => setUsername(e.target.value.toLowerCase())}
-                    placeholder="jeandupont"
+                    placeholder="johndoe"
                     required
                     className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                   />
                 </div>
                 <p className="text-xs text-slate-500 mt-1">
-                  75tools.fr/card/<span className="text-blue-400">{username || "votrenom"}</span>
+                  75tools.fr/card/<span className="text-blue-400">{username || "yourname"}</span>
                 </p>
               </div>
 
@@ -190,7 +190,7 @@ const Register = () => {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="jean@exemple.com"
+                    placeholder="john@example.com"
                     required
                     className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                   />
@@ -199,7 +199,7 @@ const Register = () => {
 
               <div>
                 <label className="block text-sm font-medium text-slate-300 mb-1.5">
-                  Mot de passe
+                  Password
                 </label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -213,7 +213,7 @@ const Register = () => {
                     className="w-full bg-white/5 border border-white/10 rounded-xl pl-10 pr-4 py-2.5 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
                   />
                 </div>
-                <p className="text-xs text-slate-500 mt-1">Minimum 6 caractères</p>
+                <p className="text-xs text-slate-500 mt-1">Minimum 6 characters</p>
               </div>
 
               <button
@@ -224,26 +224,26 @@ const Register = () => {
                 {loading ? (
                   <>
                     <Loader2 className="w-5 h-5 animate-spin" />
-                    Création...
+                    Creating...
                   </>
                 ) : (
-                  "Créer ma carte gratuitement"
+                  "Create my free card"
                 )}
               </button>
             </form>
 
             {/* Login Link */}
             <p className="text-slate-400 text-center mt-5 text-sm">
-              Déjà un compte ?{" "}
+              Already have an account?{" "}
               <Link to="/login" className="text-white hover:underline font-medium">
-                Se connecter
+                Sign in
               </Link>
             </p>
           </div>
 
           {/* Preview Column */}
           <div className="hidden lg:block">
-            <p className="text-slate-400 text-sm text-center mb-4">Aperçu de votre carte</p>
+            <p className="text-slate-400 text-sm text-center mb-4">Preview of your card</p>
 
             {/* Card Preview */}
             <div className="bg-white rounded-3xl shadow-2xl p-8 max-w-sm mx-auto transform hover:scale-[1.02] transition-transform duration-300">
@@ -256,12 +256,12 @@ const Register = () => {
 
               {/* Name */}
               <h2 className="text-xl font-bold text-slate-900 text-center mb-1">
-                {firstName || lastName ? `${firstName} ${lastName}`.trim() : "Votre Nom"}
+                {firstName || lastName ? `${firstName} ${lastName}`.trim() : "Your Name"}
               </h2>
 
               {/* Title placeholder */}
               <p className="text-slate-500 text-center text-sm mb-4">
-                Votre titre professionnel
+                Your job title
               </p>
 
               {/* Contact Info placeholders */}
@@ -270,19 +270,19 @@ const Register = () => {
                   <div className="w-8 h-8 bg-slate-200 rounded-full flex items-center justify-center text-slate-400">
                     <Phone size={14} />
                   </div>
-                  <span className="text-slate-400 text-sm">+33 6 XX XX XX XX</span>
+                  <span className="text-slate-400 text-sm">+1 XXX XXX XXXX</span>
                 </div>
                 <div className="flex items-center gap-3 p-2.5 bg-slate-50 rounded-xl">
                   <div className="w-8 h-8 bg-slate-200 rounded-full flex items-center justify-center text-slate-400">
                     <Mail size={14} />
                   </div>
-                  <span className="text-slate-400 text-sm">{email || "votre@email.com"}</span>
+                  <span className="text-slate-400 text-sm">{email || "your@email.com"}</span>
                 </div>
                 <div className="flex items-center gap-3 p-2.5 bg-slate-50 rounded-xl">
                   <div className="w-8 h-8 bg-slate-200 rounded-full flex items-center justify-center text-slate-400">
                     <Briefcase size={14} />
                   </div>
-                  <span className="text-slate-400 text-sm">Votre entreprise</span>
+                  <span className="text-slate-400 text-sm">Your company</span>
                 </div>
               </div>
 
@@ -301,12 +301,12 @@ const Register = () => {
 
               {/* Add Contact Button */}
               <button className="w-full bg-slate-900 text-white py-3 rounded-xl font-medium">
-                Ajouter aux contacts
+                Add to contacts
               </button>
 
               {/* URL */}
               <p className="text-center text-xs text-slate-400 mt-4">
-                75tools.fr/card/<span className="text-blue-500">{username || "votrenom"}</span>
+                75tools.fr/card/<span className="text-blue-500">{username || "yourname"}</span>
               </p>
             </div>
 
@@ -314,15 +314,15 @@ const Register = () => {
             <div className="mt-6 grid grid-cols-3 gap-3 max-w-sm mx-auto">
               <div className="text-center">
                 <div className="text-2xl font-bold text-white">100%</div>
-                <div className="text-xs text-slate-400">Gratuit</div>
+                <div className="text-xs text-slate-400">Free</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-white">30s</div>
-                <div className="text-xs text-slate-400">Pour créer</div>
+                <div className="text-xs text-slate-400">To create</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-white">QR</div>
-                <div className="text-xs text-slate-400">Code inclus</div>
+                <div className="text-xs text-slate-400">Code included</div>
               </div>
             </div>
           </div>
