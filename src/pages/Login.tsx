@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { CreditCard, Mail, Lock, Loader2, ArrowLeft } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import SEO from "@/components/SEO";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -34,6 +35,12 @@ const Login = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-6">
+      <SEO
+        title="Connexion - MyCard"
+        description="Connectez-vous à votre compte MyCard pour gérer votre carte de visite digitale."
+        url="https://75tools.fr/login"
+        noindex={true}
+      />
       <div className="w-full max-w-md">
         {/* Back Button */}
         <button

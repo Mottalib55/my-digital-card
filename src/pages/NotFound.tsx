@@ -1,11 +1,17 @@
 import { useNavigate } from "react-router-dom";
 import { Home } from "lucide-react";
+import SEO from "@/components/SEO";
 
 const NotFound = () => {
   const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-6">
+      <SEO
+        title="Page non trouvée - 75tools"
+        description="La page que vous recherchez n'existe pas."
+        noindex={true}
+      />
       <div className="text-center">
         <h1 className="text-8xl font-bold text-white mb-4">404</h1>
         <p className="text-xl text-slate-400 mb-8">Page not found</p>

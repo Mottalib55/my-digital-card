@@ -3,6 +3,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { CreditCard, Mail, Lock, Loader2, ArrowLeft, User, Phone, Briefcase, Instagram, Linkedin, Globe } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
+import SEO from "@/components/SEO";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -85,6 +86,13 @@ const Register = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-6">
+      <SEO
+        title="Créer votre carte - MyCard"
+        description="Créez gratuitement votre carte de visite digitale en quelques secondes. Partagez vos coordonnées professionnelles avec un QR code."
+        keywords="créer carte visite, carte digitale gratuite, inscription MyCard"
+        url="https://75tools.fr/register"
+        noindex={true}
+      />
       <div className="w-full max-w-5xl">
         {/* Back Button */}
         <button

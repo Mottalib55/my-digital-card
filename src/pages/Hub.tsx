@@ -13,6 +13,7 @@ import {
 import { GlowingEffect } from "@/components/ui/glowing-effect";
 import { cn } from "@/lib/utils";
 import { Language, getTranslations, Translations } from "@/lib/i18n";
+import SEO from "@/components/SEO";
 
 interface Tool {
   id: string;
@@ -98,8 +99,37 @@ const Hub = ({ lang }: HubProps) => {
     navigate(`/${otherLang}`);
   };
 
+  const seoContent = lang === "fr" ? {
+    title: "75tools - Outils de productivité gratuits",
+    description: "Des solutions gratuites pour augmenter votre performance. Carte de visite digitale MyCard, calculateur salaire NetSalaire et plus encore.",
+    keywords: "outils productivité, carte visite digitale, calculateur salaire, outils gratuits, MyCard, NetSalaire, 75tools",
+    url: "https://75tools.fr/fr",
+    locale: "fr_FR" as const,
+  } : {
+    title: "75tools - Free Productivity Tools",
+    description: "Free solutions to boost your performance. Digital business card MyCard, salary calculator NetSalaire and more.",
+    keywords: "productivity tools, digital business card, salary calculator, free tools, MyCard, NetSalaire, 75tools",
+    url: "https://75tools.fr/en",
+    locale: "en_US" as const,
+  };
+
   return (
     <div className="min-h-screen bg-neutral-950">
+      <SEO
+        title={seoContent.title}
+        description={seoContent.description}
+        keywords={seoContent.keywords}
+        url={seoContent.url}
+        locale={seoContent.locale}
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "75tools",
+          url: "https://75tools.fr",
+          description: seoContent.description,
+          inLanguage: lang === "fr" ? "fr-FR" : "en-US",
+        }}
+      />
       {/* Header */}
       <header className="border-b border-neutral-800">
         <div className="container mx-auto px-6 py-5">

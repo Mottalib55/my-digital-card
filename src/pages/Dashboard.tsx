@@ -12,6 +12,7 @@ import {
 } from "recharts";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase, Profile } from "@/lib/supabase";
+import SEO from "@/components/SEO";
 
 interface SocialField {
   value: string;
@@ -231,7 +232,7 @@ const Dashboard = () => {
   };
 
   const getCardUrl = () => {
-    return `${window.location.origin}${import.meta.env.BASE_URL}#/card/${profile.username}`;
+    return `${window.location.origin}/card/${profile.username}`;
   };
 
   const copyLink = () => {
@@ -331,6 +332,12 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200">
+      <SEO
+        title="Tableau de bord - MyCard"
+        description="Gérez votre carte de visite digitale, consultez vos statistiques et personnalisez votre profil."
+        url="https://75tools.fr/dashboard"
+        noindex={true}
+      />
       {/* Header */}
       <header className="bg-white border-b border-slate-200 sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">

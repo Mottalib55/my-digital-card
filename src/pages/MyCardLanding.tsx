@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { CreditCard, Users, Zap, Shield, ArrowRight, Sparkles } from "lucide-react";
+import SEO from "@/components/SEO";
 
 const MyCardLanding = () => {
   const navigate = useNavigate();
@@ -34,6 +35,26 @@ const MyCardLanding = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+      <SEO
+        title="MyCard - Carte de visite digitale gratuite"
+        description="Créez votre carte de visite digitale professionnelle gratuitement. Partagez vos coordonnées et réseaux sociaux en un clic avec un QR code."
+        keywords="carte visite digitale, carte visite numérique, vcard, qr code contact, carte professionnelle gratuite, MyCard"
+        url="https://75tools.fr/mycard"
+        type="website"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "SoftwareApplication",
+          name: "MyCard",
+          applicationCategory: "BusinessApplication",
+          operatingSystem: "Web",
+          offers: {
+            "@type": "Offer",
+            price: "0",
+            priceCurrency: "EUR",
+          },
+          description: "Créez votre carte de visite digitale professionnelle gratuitement",
+        }}
+      />
       {/* Navigation */}
       <nav className="container mx-auto px-6 py-6">
         <div className="flex items-center justify-between">

@@ -53,6 +53,7 @@ const socialColors: Record<string, { bg: string; hover: string; text: string }> 
 import { QRCodeCanvas } from "qrcode.react";
 import { supabase, Profile } from "@/lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
+import SEO from "@/components/SEO";
 
 const PublicCard = () => {
   const { username } = useParams();
@@ -268,8 +269,29 @@ END:VCARD`.replace(/\n{2,}/g, "\n");
     isFieldActive(profile.email_contact, profile.email_enabled) ||
     isFieldActive(profile.website, profile.website_enabled);
 
+  const fullName = `${profile.first_name || ""} ${profile.last_name || ""}`.trim();
+  const seoDescription = profile.bio
+    ? `${fullName} - ${profile.title || ""}${profile.company ? ` chez ${profile.company}` : ""}. ${profile.bio.substring(0, 100)}...`
+    : `Carte de visite digitale de ${fullName}${profile.title ? ` - ${profile.title}` : ""}${profile.company ? ` chez ${profile.company}` : ""}`;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 p-6">
+      <SEO
+        title={`${fullName} - Carte de visite digitale`}
+        description={seoDescription}
+        url={`https://75tools.fr/card/${username}`}
+        type="profile"
+        image={profile.avatar_url || undefined}
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "Person",
+          name: fullName,
+          jobTitle: profile.title || undefined,
+          worksFor: profile.company ? { "@type": "Organization", name: profile.company } : undefined,
+          url: `https://75tools.fr/card/${username}`,
+          image: profile.avatar_url || undefined,
+        }}
+      />
       {/* Back to MyCard */}
       <div className="max-w-md mx-auto mb-4">
         <button
@@ -443,7 +465,7 @@ END:VCARD`.replace(/\n{2,}/g, "\n");
               <div className="bg-white p-4 rounded-2xl shadow-inner border border-slate-100">
                 <QRCodeCanvas
                   id="qr-code"
-                  value={`${window.location.origin}${import.meta.env.BASE_URL}#/card/${username}`}
+                  value={`${window.location.origin}/card/${username}`}
                   size={120}
                   level="M"
                   includeMargin={false}
