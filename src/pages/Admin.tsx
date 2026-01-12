@@ -1,387 +1,423 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  Save, ArrowLeft, Upload, User, Phone, Mail, Briefcase,
-  Linkedin, Twitter, Instagram, Github, Facebook, Youtube,
-  Globe, MessageCircle, Send, Music2, Camera, Link
+  Users, Eye, UserCheck, TrendingUp, ArrowLeft, ExternalLink,
+  Calendar, Mail, User, Shield, RefreshCw, Search, ChevronDown,
+  BarChart3, Clock
 } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase, Profile } from "@/lib/supabase";
+import SEO from "@/components/SEO";
 
-export interface SocialField {
-  value: string;
-  enabled: boolean;
+// Admin emails allowed to access this page
+const ADMIN_EMAILS = ["mottalib55@gmail.com"]; // Add your email here
+
+interface UserStats {
+  totalUsers: number;
+  totalViews: number;
+  totalContacts: number;
+  recentUsers: number; // Last 7 days
 }
 
-export interface CardData {
-  // Identité
-  firstName: string;
-  lastName: string;
-  title: string;
-  company: string;
-  bio: string;
-  avatar: string;
-
-  // Contact
-  phone: SocialField;
-  email: SocialField;
-  website: SocialField;
-
-  // Réseaux professionnels
-  linkedin: SocialField;
-
-  // Réseaux sociaux
-  twitter: SocialField;
-  instagram: SocialField;
-  facebook: SocialField;
-  tiktok: SocialField;
-  youtube: SocialField;
-  snapchat: SocialField;
-
-  // Tech & Dev
-  github: SocialField;
-
-  // Messagerie
-  whatsapp: SocialField;
-  telegram: SocialField;
-}
-
-const defaultField: SocialField = { value: "", enabled: false };
-
-const defaultData: CardData = {
-  firstName: "",
-  lastName: "",
-  title: "",
-  company: "",
-  bio: "",
-  avatar: "",
-  phone: { value: "", enabled: false },
-  email: { value: "", enabled: false },
-  website: { value: "", enabled: false },
-  linkedin: { value: "", enabled: false },
-  twitter: { value: "", enabled: false },
-  instagram: { value: "", enabled: false },
-  facebook: { value: "", enabled: false },
-  tiktok: { value: "", enabled: false },
-  youtube: { value: "", enabled: false },
-  snapchat: { value: "", enabled: false },
-  github: { value: "", enabled: false },
-  whatsapp: { value: "", enabled: false },
-  telegram: { value: "", enabled: false },
-};
-
-interface FieldConfig {
-  key: keyof CardData;
-  label: string;
-  icon: React.ReactNode;
-  placeholder: string;
-  type?: string;
+interface AnalyticsEvent {
+  profile_id: string;
+  event_type: string;
+  created_at: string;
 }
 
 const Admin = () => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState<CardData>(defaultData);
-  const [saved, setSaved] = useState(false);
+  const { user, loading: authLoading } = useAuth();
+  const [profiles, setProfiles] = useState<Profile[]>([]);
+  const [analytics, setAnalytics] = useState<Record<string, { views: number; contacts: number }>>({});
+  const [stats, setStats] = useState<UserStats>({
+    totalUsers: 0,
+    totalViews: 0,
+    totalContacts: 0,
+    recentUsers: 0,
+  });
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState<"recent" | "views" | "name">("recent");
 
   useEffect(() => {
-    const stored = localStorage.getItem("cardData");
-    if (stored) {
-      const parsed = JSON.parse(stored);
-      // Migration des anciennes données
-      const migrated = { ...defaultData };
-      Object.keys(parsed).forEach((key) => {
-        if (key in migrated) {
-          const value = parsed[key];
-          if (typeof value === "string" && key in defaultData && typeof (defaultData as any)[key] === "object") {
-            (migrated as any)[key] = { value, enabled: !!value };
-          } else {
-            (migrated as any)[key] = value;
-          }
+    if (authLoading) return;
+
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
+    // Check if user is admin
+    if (!ADMIN_EMAILS.includes(user.email || "")) {
+      navigate("/dashboard");
+      return;
+    }
+
+    loadData();
+  }, [user, authLoading, navigate]);
+
+  const loadData = async () => {
+    setLoading(true);
+
+    // Load all profiles
+    const { data: profilesData, error: profilesError } = await supabase
+      .from("profiles")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (profilesError) {
+      console.error("Error loading profiles:", profilesError);
+    } else if (profilesData) {
+      setProfiles(profilesData);
+
+      // Calculate recent users (last 7 days)
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      const recentCount = profilesData.filter(
+        (p) => new Date(p.created_at) > sevenDaysAgo
+      ).length;
+
+      setStats((prev) => ({
+        ...prev,
+        totalUsers: profilesData.length,
+        recentUsers: recentCount,
+      }));
+    }
+
+    // Load analytics
+    const { data: analyticsData, error: analyticsError } = await supabase
+      .from("analytics")
+      .select("profile_id, event_type, created_at");
+
+    if (analyticsError) {
+      console.error("Error loading analytics:", analyticsError);
+    } else if (analyticsData) {
+      // Group analytics by profile
+      const analyticsMap: Record<string, { views: number; contacts: number }> = {};
+      let totalViews = 0;
+      let totalContacts = 0;
+
+      analyticsData.forEach((event: AnalyticsEvent) => {
+        if (!analyticsMap[event.profile_id]) {
+          analyticsMap[event.profile_id] = { views: 0, contacts: 0 };
+        }
+        if (event.event_type === "view") {
+          analyticsMap[event.profile_id].views++;
+          totalViews++;
+        } else if (event.event_type === "contact_saved") {
+          analyticsMap[event.profile_id].contacts++;
+          totalContacts++;
         }
       });
-      setFormData(migrated);
+
+      setAnalytics(analyticsMap);
+      setStats((prev) => ({
+        ...prev,
+        totalViews,
+        totalContacts,
+      }));
     }
-  }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setLoading(false);
   };
 
-  const handleFieldChange = (key: keyof CardData, value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      [key]: { ...(prev[key] as SocialField), value },
-    }));
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString("fr-FR", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   };
 
-  const handleFieldToggle = (key: keyof CardData) => {
-    setFormData((prev) => ({
-      ...prev,
-      [key]: { ...(prev[key] as SocialField), enabled: !(prev[key] as SocialField).enabled },
-    }));
+  const getRelativeTime = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 0) return "Aujourd'hui";
+    if (diffDays === 1) return "Hier";
+    if (diffDays < 7) return `Il y a ${diffDays} jours`;
+    if (diffDays < 30) return `Il y a ${Math.floor(diffDays / 7)} sem.`;
+    return `Il y a ${Math.floor(diffDays / 30)} mois`;
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData((prev) => ({ ...prev, avatar: reader.result as string }));
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+  // Filter and sort profiles
+  const filteredProfiles = profiles
+    .filter((profile) => {
+      const searchLower = searchTerm.toLowerCase();
+      return (
+        profile.username?.toLowerCase().includes(searchLower) ||
+        profile.first_name?.toLowerCase().includes(searchLower) ||
+        profile.last_name?.toLowerCase().includes(searchLower) ||
+        profile.email_contact?.toLowerCase().includes(searchLower) ||
+        profile.company?.toLowerCase().includes(searchLower)
+      );
+    })
+    .sort((a, b) => {
+      if (sortBy === "recent") {
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      }
+      if (sortBy === "views") {
+        const viewsA = analytics[a.id]?.views || 0;
+        const viewsB = analytics[b.id]?.views || 0;
+        return viewsB - viewsA;
+      }
+      if (sortBy === "name") {
+        const nameA = `${a.first_name} ${a.last_name}`.toLowerCase();
+        const nameB = `${b.first_name} ${b.last_name}`.toLowerCase();
+        return nameA.localeCompare(nameB);
+      }
+      return 0;
+    });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    localStorage.setItem("cardData", JSON.stringify(formData));
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
-  };
-
-  const contactFields: FieldConfig[] = [
-    { key: "phone", label: "Téléphone", icon: <Phone size={18} />, placeholder: "+33 6 12 34 56 78", type: "tel" },
-    { key: "email", label: "Email", icon: <Mail size={18} />, placeholder: "contact@example.com", type: "email" },
-    { key: "website", label: "Site web", icon: <Globe size={18} />, placeholder: "https://monsite.com", type: "url" },
-  ];
-
-  const professionalFields: FieldConfig[] = [
-    { key: "linkedin", label: "LinkedIn", icon: <Linkedin size={18} />, placeholder: "https://linkedin.com/in/username" },
-  ];
-
-  const socialFields: FieldConfig[] = [
-    { key: "twitter", label: "Twitter / X", icon: <Twitter size={18} />, placeholder: "https://twitter.com/username" },
-    { key: "instagram", label: "Instagram", icon: <Instagram size={18} />, placeholder: "https://instagram.com/username" },
-    { key: "facebook", label: "Facebook", icon: <Facebook size={18} />, placeholder: "https://facebook.com/username" },
-    { key: "tiktok", label: "TikTok", icon: <Music2 size={18} />, placeholder: "https://tiktok.com/@username" },
-    { key: "youtube", label: "YouTube", icon: <Youtube size={18} />, placeholder: "https://youtube.com/@username" },
-    { key: "snapchat", label: "Snapchat", icon: <Camera size={18} />, placeholder: "username" },
-  ];
-
-  const techFields: FieldConfig[] = [
-    { key: "github", label: "GitHub", icon: <Github size={18} />, placeholder: "https://github.com/username" },
-  ];
-
-  const messagingFields: FieldConfig[] = [
-    { key: "whatsapp", label: "WhatsApp", icon: <MessageCircle size={18} />, placeholder: "+33612345678", type: "tel" },
-    { key: "telegram", label: "Telegram", icon: <Send size={18} />, placeholder: "@username" },
-  ];
-
-  const renderFieldGroup = (title: string, fields: FieldConfig[]) => (
-    <div className="space-y-3">
-      <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider">{title}</h3>
-      <div className="space-y-2">
-        {fields.map((field) => {
-          const fieldData = formData[field.key] as SocialField;
-          return (
-            <div
-              key={field.key}
-              className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${
-                fieldData.enabled
-                  ? "bg-white border-slate-200 shadow-sm"
-                  : "bg-slate-50 border-slate-100"
-              }`}
-            >
-              <button
-                type="button"
-                onClick={() => handleFieldToggle(field.key)}
-                className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center transition-colors ${
-                  fieldData.enabled
-                    ? "bg-slate-900 text-white"
-                    : "bg-slate-200 text-slate-400"
-                }`}
-              >
-                {field.icon}
-              </button>
-              <div className="flex-1 min-w-0">
-                <label className="block text-xs font-medium text-slate-500 mb-1">{field.label}</label>
-                <input
-                  type={field.type || "url"}
-                  value={fieldData.value}
-                  onChange={(e) => handleFieldChange(field.key, e.target.value)}
-                  placeholder={field.placeholder}
-                  disabled={!fieldData.enabled}
-                  className={`w-full text-sm bg-transparent border-0 p-0 focus:ring-0 outline-none ${
-                    fieldData.enabled ? "text-slate-900" : "text-slate-400"
-                  }`}
-                />
-              </div>
-              <label className="relative inline-flex items-center cursor-pointer flex-shrink-0">
-                <input
-                  type="checkbox"
-                  checked={fieldData.enabled}
-                  onChange={() => handleFieldToggle(field.key)}
-                  className="sr-only peer"
-                />
-                <div className="w-9 h-5 bg-slate-200 peer-focus:ring-2 peer-focus:ring-slate-300 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-slate-900"></div>
-              </label>
-            </div>
-          );
-        })}
+  if (authLoading || loading) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
       </div>
-    </div>
-  );
+    );
+  }
+
+  if (!user || !ADMIN_EMAILS.includes(user.email || "")) {
+    return null;
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 p-4 md:p-8">
-      <div className="max-w-2xl mx-auto">
-        {/* Header */}
-        <div className="flex items-center gap-4 mb-6">
+    <div className="min-h-screen bg-slate-900">
+      <SEO
+        title="Admin - 75tools"
+        description="Panneau d'administration"
+        noindex={true}
+      />
+
+      {/* Header */}
+      <header className="bg-slate-800 border-b border-slate-700 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => navigate("/dashboard")}
+              className="p-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-white transition-colors"
+            >
+              <ArrowLeft size={20} />
+            </button>
+            <div className="flex items-center gap-2">
+              <Shield className="w-6 h-6 text-blue-400" />
+              <span className="text-xl font-bold text-white">Admin Panel</span>
+            </div>
+          </div>
           <button
-            onClick={() => navigate("/")}
-            className="p-2.5 rounded-full bg-white shadow-md hover:shadow-lg transition-shadow"
+            onClick={loadData}
+            className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors"
           >
-            <ArrowLeft size={20} />
+            <RefreshCw size={18} />
+            Actualiser
           </button>
-          <div>
-            <h1 className="text-xl font-bold text-slate-900">Administration</h1>
-            <p className="text-sm text-slate-500">Personnalisez votre carte digitale</p>
+        </div>
+      </header>
+
+      <div className="max-w-7xl mx-auto p-4 md:p-8">
+        {/* Stats Cards */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-5 text-white">
+            <div className="flex items-center gap-3 mb-2">
+              <Users className="w-5 h-5 opacity-80" />
+              <span className="text-sm opacity-80">Utilisateurs</span>
+            </div>
+            <p className="text-3xl font-bold">{stats.totalUsers}</p>
+            <p className="text-xs opacity-70 mt-1">+{stats.recentUsers} cette semaine</p>
+          </div>
+
+          <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl p-5 text-white">
+            <div className="flex items-center gap-3 mb-2">
+              <Eye className="w-5 h-5 opacity-80" />
+              <span className="text-sm opacity-80">Vues totales</span>
+            </div>
+            <p className="text-3xl font-bold">{stats.totalViews}</p>
+            <p className="text-xs opacity-70 mt-1">Sur toutes les cartes</p>
+          </div>
+
+          <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl p-5 text-white">
+            <div className="flex items-center gap-3 mb-2">
+              <UserCheck className="w-5 h-5 opacity-80" />
+              <span className="text-sm opacity-80">Contacts sauvés</span>
+            </div>
+            <p className="text-3xl font-bold">{stats.totalContacts}</p>
+            <p className="text-xs opacity-70 mt-1">Téléchargements vCard</p>
+          </div>
+
+          <div className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl p-5 text-white">
+            <div className="flex items-center gap-3 mb-2">
+              <TrendingUp className="w-5 h-5 opacity-80" />
+              <span className="text-sm opacity-80">Taux conversion</span>
+            </div>
+            <p className="text-3xl font-bold">
+              {stats.totalViews > 0
+                ? `${((stats.totalContacts / stats.totalViews) * 100).toFixed(1)}%`
+                : "0%"}
+            </p>
+            <p className="text-xs opacity-70 mt-1">Vues → Contacts</p>
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Section: Identité */}
-          <div className="bg-white rounded-2xl shadow-lg p-6 space-y-5">
-            <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
-              <User size={20} className="text-slate-400" />
-              <h2 className="font-semibold text-slate-900">Identité</h2>
+        {/* Users Table */}
+        <div className="bg-slate-800 rounded-2xl overflow-hidden">
+          {/* Table Header */}
+          <div className="p-4 border-b border-slate-700 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex items-center gap-2">
+              <Users className="w-5 h-5 text-slate-400" />
+              <h2 className="font-semibold text-white">Utilisateurs inscrits</h2>
+              <span className="px-2 py-0.5 bg-slate-700 text-slate-300 text-xs rounded-full">
+                {filteredProfiles.length}
+              </span>
             </div>
 
-            {/* Photo */}
-            <div className="flex items-center gap-4">
-              {formData.avatar ? (
-                <img
-                  src={formData.avatar}
-                  alt="Avatar"
-                  className="w-20 h-20 rounded-full object-cover border-2 border-slate-200"
+            <div className="flex items-center gap-3">
+              {/* Search */}
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <input
+                  type="text"
+                  placeholder="Rechercher..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-9 pr-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 w-48"
                 />
-              ) : (
-                <div className="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center">
-                  <Upload size={24} className="text-slate-300" />
-                </div>
-              )}
-              <div className="space-y-2">
-                <label className="cursor-pointer inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                  <Upload size={16} />
-                  Choisir une photo
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    className="hidden"
-                  />
-                </label>
-                <p className="text-xs text-slate-400">JPG, PNG. Max 2MB</p>
               </div>
-            </div>
 
-            {/* Nom & Prénom */}
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1.5">Prénom</label>
-                <input
-                  type="text"
-                  name="firstName"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  placeholder="Jean"
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none transition text-sm"
-                />
+              {/* Sort */}
+              <div className="relative">
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as "recent" | "views" | "name")}
+                  className="appearance-none pl-4 pr-8 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="recent">Plus récents</option>
+                  <option value="views">Plus vus</option>
+                  <option value="name">Alphabétique</option>
+                </select>
+                <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
               </div>
-              <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1.5">Nom</label>
-                <input
-                  type="text"
-                  name="lastName"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  placeholder="Dupont"
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none transition text-sm"
-                />
-              </div>
-            </div>
-
-            {/* Titre & Entreprise */}
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1.5">Titre / Poste</label>
-                <input
-                  type="text"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleChange}
-                  placeholder="Développeur Web"
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none transition text-sm"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-slate-500 mb-1.5">Entreprise</label>
-                <input
-                  type="text"
-                  name="company"
-                  value={formData.company}
-                  onChange={handleChange}
-                  placeholder="Ma Société"
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none transition text-sm"
-                />
-              </div>
-            </div>
-
-            {/* Bio */}
-            <div>
-              <label className="block text-xs font-medium text-slate-500 mb-1.5">Bio</label>
-              <textarea
-                name="bio"
-                value={formData.bio}
-                onChange={handleChange}
-                placeholder="Une courte description de vous..."
-                rows={3}
-                className="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:ring-2 focus:ring-slate-900 focus:border-transparent outline-none transition resize-none text-sm"
-              />
             </div>
           </div>
 
-          {/* Section: Contact */}
-          <div className="bg-white rounded-2xl shadow-lg p-6 space-y-5">
-            <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
-              <Phone size={20} className="text-slate-400" />
-              <h2 className="font-semibold text-slate-900">Contact</h2>
-            </div>
-            {renderFieldGroup("Coordonnées", contactFields)}
-          </div>
+          {/* Table */}
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-slate-700/50">
+                <tr>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
+                    Utilisateur
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider hidden md:table-cell">
+                    Contact
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider hidden lg:table-cell">
+                    Entreprise
+                  </th>
+                  <th className="px-4 py-3 text-center text-xs font-medium text-slate-400 uppercase tracking-wider">
+                    Stats
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider hidden sm:table-cell">
+                    Inscription
+                  </th>
+                  <th className="px-4 py-3 text-center text-xs font-medium text-slate-400 uppercase tracking-wider">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-700">
+                {filteredProfiles.map((profile) => {
+                  const profileAnalytics = analytics[profile.id] || { views: 0, contacts: 0 };
+                  return (
+                    <tr key={profile.id} className="hover:bg-slate-700/30 transition-colors">
+                      <td className="px-4 py-4">
+                        <div className="flex items-center gap-3">
+                          {profile.avatar_url ? (
+                            <img
+                              src={profile.avatar_url}
+                              alt={profile.username}
+                              className="w-10 h-10 rounded-full object-cover"
+                            />
+                          ) : (
+                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-medium">
+                              {(profile.first_name?.[0] || "").toUpperCase()}
+                              {(profile.last_name?.[0] || "").toUpperCase()}
+                            </div>
+                          )}
+                          <div>
+                            <p className="font-medium text-white">
+                              {profile.first_name} {profile.last_name}
+                            </p>
+                            <p className="text-sm text-slate-400">@{profile.username}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-4 py-4 hidden md:table-cell">
+                        <div className="text-sm">
+                          {profile.email_contact && (
+                            <p className="text-slate-300 flex items-center gap-1">
+                              <Mail className="w-3 h-3" />
+                              {profile.email_contact}
+                            </p>
+                          )}
+                          {profile.title && (
+                            <p className="text-slate-400 text-xs mt-0.5">{profile.title}</p>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-4 py-4 hidden lg:table-cell">
+                        <span className="text-slate-300 text-sm">
+                          {profile.company || "-"}
+                        </span>
+                      </td>
+                      <td className="px-4 py-4">
+                        <div className="flex items-center justify-center gap-4">
+                          <div className="text-center">
+                            <p className="text-white font-medium">{profileAnalytics.views}</p>
+                            <p className="text-xs text-slate-400">vues</p>
+                          </div>
+                          <div className="text-center">
+                            <p className="text-white font-medium">{profileAnalytics.contacts}</p>
+                            <p className="text-xs text-slate-400">contacts</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-4 py-4 hidden sm:table-cell">
+                        <div className="flex items-center gap-1 text-slate-400 text-sm">
+                          <Clock className="w-3 h-3" />
+                          {getRelativeTime(profile.created_at)}
+                        </div>
+                      </td>
+                      <td className="px-4 py-4">
+                        <div className="flex items-center justify-center">
+                          <button
+                            onClick={() => window.open(`/card/${profile.username}`, "_blank")}
+                            className="p-2 text-slate-400 hover:text-white hover:bg-slate-600 rounded-lg transition-colors"
+                            title="Voir la carte"
+                          >
+                            <ExternalLink size={18} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
 
-          {/* Section: Réseaux Professionnels */}
-          <div className="bg-white rounded-2xl shadow-lg p-6 space-y-5">
-            <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
-              <Briefcase size={20} className="text-slate-400" />
-              <h2 className="font-semibold text-slate-900">Professionnel</h2>
-            </div>
-            {renderFieldGroup("Réseaux professionnels", professionalFields)}
+            {filteredProfiles.length === 0 && (
+              <div className="py-12 text-center">
+                <Users className="w-12 h-12 text-slate-600 mx-auto mb-3" />
+                <p className="text-slate-400">Aucun utilisateur trouvé</p>
+              </div>
+            )}
           </div>
-
-          {/* Section: Réseaux Sociaux */}
-          <div className="bg-white rounded-2xl shadow-lg p-6 space-y-5">
-            <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
-              <Link size={20} className="text-slate-400" />
-              <h2 className="font-semibold text-slate-900">Réseaux Sociaux</h2>
-            </div>
-            {renderFieldGroup("Plateformes sociales", socialFields)}
-            {renderFieldGroup("Tech & Dev", techFields)}
-            {renderFieldGroup("Messagerie", messagingFields)}
-          </div>
-
-          {/* Submit */}
-          <button
-            type="submit"
-            className={`w-full flex items-center justify-center gap-2 font-medium py-4 px-6 rounded-xl transition-all shadow-lg ${
-              saved
-                ? "bg-green-500 text-white"
-                : "bg-slate-900 hover:bg-slate-800 text-white hover:shadow-xl"
-            }`}
-          >
-            <Save size={20} />
-            {saved ? "Enregistré !" : "Enregistrer les modifications"}
-          </button>
-        </form>
+        </div>
       </div>
     </div>
   );

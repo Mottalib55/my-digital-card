@@ -11,6 +11,7 @@ import MyCardLanding from "./pages/MyCardLanding";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
+import Admin from "./pages/Admin";
 import PublicCard from "./pages/PublicCard";
 import NotFound from "./pages/NotFound";
 import LanguageRedirect from "./components/LanguageRedirect";
@@ -41,6 +42,7 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/admin" element={<Admin />} />
             <Route path="/card/:username" element={<PublicCard />} />
 
             {/* 404 */}
