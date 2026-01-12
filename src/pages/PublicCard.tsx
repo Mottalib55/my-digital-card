@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import {
   Instagram, Linkedin, Github, Facebook, Youtube,
   Mail, Phone, UserPlus, Globe, QrCode, Download,
-  LayoutDashboard, LogIn, UserPlus as UserPlusIcon, ArrowLeft
+  LayoutDashboard, LogIn, UserPlus as UserPlusIcon, ArrowLeft, Share2
 } from "lucide-react";
 
 // Custom SVG icons for social platforms
@@ -209,6 +209,32 @@ END:VCARD`.replace(/\n{2,}/g, "\n");
     return `https://t.me/${cleaned}`;
   };
 
+  const handleShare = async () => {
+    const shareUrl = `${window.location.origin}/card/${username}`;
+    const shareData = {
+      title: `${profile?.first_name} ${profile?.last_name}`.trim() || "Digital Business Card",
+      text: profile?.title
+        ? `Check out ${profile?.first_name}'s digital business card - ${profile?.title}`
+        : `Check out this digital business card`,
+      url: shareUrl,
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch (err) {
+        // User cancelled or share failed, fallback to clipboard
+        if ((err as Error).name !== "AbortError") {
+          navigator.clipboard.writeText(shareUrl);
+        }
+      }
+    } else {
+      // Fallback: copy to clipboard
+      navigator.clipboard.writeText(shareUrl);
+      alert("Link copied to clipboard!");
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center">
@@ -357,7 +383,16 @@ END:VCARD`.replace(/\n{2,}/g, "\n");
       )}
 
       <div className="w-full max-w-md mx-auto">
-        <div className="bg-white rounded-3xl shadow-xl p-8">
+        <div className="bg-white rounded-3xl shadow-xl p-8 relative">
+          {/* Share Button */}
+          <button
+            onClick={handleShare}
+            className="absolute top-4 right-4 p-2.5 bg-slate-100 hover:bg-slate-200 rounded-full transition-colors"
+            title="Share this card"
+          >
+            <Share2 size={20} className="text-slate-600" />
+          </button>
+
           {/* Avatar */}
           <div className="flex justify-center mb-6">
             {profile.avatar_url ? (
