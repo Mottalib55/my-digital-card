@@ -10,7 +10,7 @@ import { supabase, Profile } from "@/lib/supabase";
 import SEO from "@/components/SEO";
 
 // Admin emails allowed to access this page
-const ADMIN_EMAILS = ["mottalib55@gmail.com", "amradif@gmail.com"];
+const ADMIN_EMAILS = ["mottalib55@gmail.com", "amradif@gmail.com"].map(e => e.toLowerCase());
 
 interface UserStats {
   totalUsers: number;
@@ -48,8 +48,10 @@ const Admin = () => {
       return;
     }
 
-    // Check if user is admin
-    if (!ADMIN_EMAILS.includes(user.email || "")) {
+    // Check if user is admin (case-insensitive)
+    const userEmail = (user.email || "").toLowerCase();
+    if (!ADMIN_EMAILS.includes(userEmail)) {
+      console.log("Access denied for:", userEmail);
       navigate("/dashboard");
       return;
     }
@@ -183,7 +185,7 @@ const Admin = () => {
     );
   }
 
-  if (!user || !ADMIN_EMAILS.includes(user.email || "")) {
+  if (!user || !ADMIN_EMAILS.includes((user.email || "").toLowerCase())) {
     return null;
   }
 
