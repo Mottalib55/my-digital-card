@@ -1,8 +1,13 @@
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { CreditCard, Users, Zap, Shield, ArrowRight, Sparkles } from "lucide-react";
 
 const MyCardLanding = () => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const features = [
     {
