@@ -41,21 +41,32 @@ const Admin = () => {
   const [sortBy, setSortBy] = useState<"recent" | "views" | "name">("recent");
 
   useEffect(() => {
-    if (authLoading) return;
+    console.log("Admin useEffect - authLoading:", authLoading, "user:", user?.email);
+
+    if (authLoading) {
+      console.log("Still loading auth...");
+      return;
+    }
 
     if (!user) {
+      console.log("No user, redirecting to login");
       navigate("/login");
       return;
     }
 
     // Check if user is admin (case-insensitive)
     const userEmail = (user.email || "").toLowerCase();
+    console.log("Checking admin access for:", userEmail);
+    console.log("ADMIN_EMAILS:", ADMIN_EMAILS);
+    console.log("Is admin?", ADMIN_EMAILS.includes(userEmail));
+
     if (!ADMIN_EMAILS.includes(userEmail)) {
       console.log("Access denied for:", userEmail);
       navigate("/dashboard");
       return;
     }
 
+    console.log("Access granted, loading data...");
     loadData();
   }, [user, authLoading, navigate]);
 
