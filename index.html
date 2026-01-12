@@ -20,10 +20,10 @@
     <!-- GitHub Pages SPA redirect handler - MUST run before React -->
     <script>
       (function() {
-        var redirect = sessionStorage.getItem('spa-redirect');
+        var params = new URLSearchParams(window.location.search);
+        var redirect = params.get('redirect');
         if (redirect) {
-          sessionStorage.removeItem('spa-redirect');
-          window.history.replaceState(null, null, redirect);
+          window.history.replaceState(null, null, decodeURIComponent(redirect));
         }
       })();
     </script>
