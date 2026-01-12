@@ -102,6 +102,57 @@ const PublicCard = () => {
     }
   }, [profile, viewTracked]);
 
+  // Dynamic manifest for PWA - allows each card to be saved to home screen with correct URL
+  useEffect(() => {
+    if (!profile || !username) return;
+
+    const fullName = `${profile.first_name || ""} ${profile.last_name || ""}`.trim();
+    const cardUrl = `/card/${username}`;
+
+    const manifest = {
+      name: fullName || "Digital Card",
+      short_name: profile.first_name || "Card",
+      description: profile.title ? `${fullName} - ${profile.title}` : `${fullName}'s digital business card`,
+      start_url: cardUrl,
+      scope: cardUrl,
+      display: "standalone",
+      background_color: "#f1f5f9",
+      theme_color: "#0f172a",
+      icons: [
+        {
+          src: profile.avatar_url || "/favicon.svg",
+          sizes: "any",
+          type: profile.avatar_url ? "image/jpeg" : "image/svg+xml",
+          purpose: "any maskable"
+        }
+      ]
+    };
+
+    const blob = new Blob([JSON.stringify(manifest)], { type: "application/json" });
+    const manifestUrl = URL.createObjectURL(blob);
+
+    // Remove existing manifest link and add new one
+    const existingManifest = document.querySelector('link[rel="manifest"]');
+    if (existingManifest) {
+      existingManifest.setAttribute("href", manifestUrl);
+    } else {
+      const link = document.createElement("link");
+      link.rel = "manifest";
+      link.href = manifestUrl;
+      document.head.appendChild(link);
+    }
+
+    // Update apple-mobile-web-app-title
+    let appleTitleMeta = document.querySelector('meta[name="apple-mobile-web-app-title"]');
+    if (appleTitleMeta) {
+      appleTitleMeta.setAttribute("content", fullName || "Card");
+    }
+
+    return () => {
+      URL.revokeObjectURL(manifestUrl);
+    };
+  }, [profile, username]);
+
   const loadProfile = async () => {
     if (!username) {
       setNotFound(true);
