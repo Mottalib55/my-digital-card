@@ -25,11 +25,17 @@ interface AnalyticsEvent {
   created_at: string;
 }
 
+interface ProfileAnalytics {
+  views: number;
+  contacts: number;
+  lastView: string | null;
+}
+
 const Admin = () => {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
   const [profiles, setProfiles] = useState<Profile[]>([]);
-  const [analytics, setAnalytics] = useState<Record<string, { views: number; contacts: number }>>({});
+  const [analytics, setAnalytics] = useState<Record<string, ProfileAnalytics>>({});
   const [stats, setStats] = useState<UserStats>({
     totalUsers: 0,
     totalViews: 0,
@@ -38,7 +44,7 @@ const Admin = () => {
   });
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortBy, setSortBy] = useState<"recent" | "views" | "name">("recent");
+  const [sortBy, setSortBy] = useState<"recent" | "views" | "name" | "lastScan">("recent");
 
   useEffect(() => {
     console.log("Admin useEffect - authLoading:", authLoading, "user:", user?.email);
@@ -101,23 +107,28 @@ const Admin = () => {
     // Load analytics
     const { data: analyticsData, error: analyticsError } = await supabase
       .from("analytics")
-      .select("profile_id, event_type, created_at");
+      .select("profile_id, event_type, created_at")
+      .order("created_at", { ascending: false });
 
     if (analyticsError) {
       console.error("Error loading analytics:", analyticsError);
     } else if (analyticsData) {
       // Group analytics by profile
-      const analyticsMap: Record<string, { views: number; contacts: number }> = {};
+      const analyticsMap: Record<string, ProfileAnalytics> = {};
       let totalViews = 0;
       let totalContacts = 0;
 
       analyticsData.forEach((event: AnalyticsEvent) => {
         if (!analyticsMap[event.profile_id]) {
-          analyticsMap[event.profile_id] = { views: 0, contacts: 0 };
+          analyticsMap[event.profile_id] = { views: 0, contacts: 0, lastView: null };
         }
         if (event.event_type === "view") {
           analyticsMap[event.profile_id].views++;
           totalViews++;
+          // Track the most recent view (first one since ordered desc)
+          if (!analyticsMap[event.profile_id].lastView) {
+            analyticsMap[event.profile_id].lastView = event.created_at;
+          }
         } else if (event.event_type === "contact_saved") {
           analyticsMap[event.profile_id].contacts++;
           totalContacts++;
@@ -152,11 +163,11 @@ const Admin = () => {
     const diffMs = now.getTime() - date.getTime();
     const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-    if (diffDays === 0) return "Aujourd'hui";
-    if (diffDays === 1) return "Hier";
-    if (diffDays < 7) return `Il y a ${diffDays} jours`;
-    if (diffDays < 30) return `Il y a ${Math.floor(diffDays / 7)} sem.`;
-    return `Il y a ${Math.floor(diffDays / 30)} mois`;
+    if (diffDays === 0) return "Today";
+    if (diffDays === 1) return "Yesterday";
+    if (diffDays < 7) return `${diffDays} days ago`;
+    if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
+    return `${Math.floor(diffDays / 30)} months ago`;
   };
 
   // Filter and sort profiles
@@ -179,6 +190,14 @@ const Admin = () => {
         const viewsA = analytics[a.id]?.views || 0;
         const viewsB = analytics[b.id]?.views || 0;
         return viewsB - viewsA;
+      }
+      if (sortBy === "lastScan") {
+        const lastA = analytics[a.id]?.lastView;
+        const lastB = analytics[b.id]?.lastView;
+        if (!lastA && !lastB) return 0;
+        if (!lastA) return 1;
+        if (!lastB) return -1;
+        return new Date(lastB).getTime() - new Date(lastA).getTime();
       }
       if (sortBy === "name") {
         const nameA = `${a.first_name} ${a.last_name}`.toLowerCase();
@@ -228,7 +247,7 @@ const Admin = () => {
             className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors"
           >
             <RefreshCw size={18} />
-            Actualiser
+            Refresh
           </button>
         </div>
       </header>
@@ -239,41 +258,41 @@ const Admin = () => {
           <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl p-5 text-white">
             <div className="flex items-center gap-3 mb-2">
               <Users className="w-5 h-5 opacity-80" />
-              <span className="text-sm opacity-80">Utilisateurs</span>
+              <span className="text-sm opacity-80">Users</span>
             </div>
             <p className="text-3xl font-bold">{stats.totalUsers}</p>
-            <p className="text-xs opacity-70 mt-1">+{stats.recentUsers} cette semaine</p>
+            <p className="text-xs opacity-70 mt-1">+{stats.recentUsers} this week</p>
           </div>
 
           <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl p-5 text-white">
             <div className="flex items-center gap-3 mb-2">
               <Eye className="w-5 h-5 opacity-80" />
-              <span className="text-sm opacity-80">Vues totales</span>
+              <span className="text-sm opacity-80">Total views</span>
             </div>
             <p className="text-3xl font-bold">{stats.totalViews}</p>
-            <p className="text-xs opacity-70 mt-1">Sur toutes les cartes</p>
+            <p className="text-xs opacity-70 mt-1">Across all cards</p>
           </div>
 
           <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl p-5 text-white">
             <div className="flex items-center gap-3 mb-2">
               <UserCheck className="w-5 h-5 opacity-80" />
-              <span className="text-sm opacity-80">Contacts sauvés</span>
+              <span className="text-sm opacity-80">Contacts saved</span>
             </div>
             <p className="text-3xl font-bold">{stats.totalContacts}</p>
-            <p className="text-xs opacity-70 mt-1">Téléchargements vCard</p>
+            <p className="text-xs opacity-70 mt-1">vCard downloads</p>
           </div>
 
           <div className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl p-5 text-white">
             <div className="flex items-center gap-3 mb-2">
               <TrendingUp className="w-5 h-5 opacity-80" />
-              <span className="text-sm opacity-80">Taux conversion</span>
+              <span className="text-sm opacity-80">Conversion rate</span>
             </div>
             <p className="text-3xl font-bold">
               {stats.totalViews > 0
                 ? `${((stats.totalContacts / stats.totalViews) * 100).toFixed(1)}%`
                 : "0%"}
             </p>
-            <p className="text-xs opacity-70 mt-1">Vues → Contacts</p>
+            <p className="text-xs opacity-70 mt-1">Views → Contacts</p>
           </div>
         </div>
 
@@ -283,7 +302,7 @@ const Admin = () => {
           <div className="p-4 border-b border-slate-700 flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex items-center gap-2">
               <Users className="w-5 h-5 text-slate-400" />
-              <h2 className="font-semibold text-white">Utilisateurs inscrits</h2>
+              <h2 className="font-semibold text-white">Registered users</h2>
               <span className="px-2 py-0.5 bg-slate-700 text-slate-300 text-xs rounded-full">
                 {filteredProfiles.length}
               </span>
@@ -295,7 +314,7 @@ const Admin = () => {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                 <input
                   type="text"
-                  placeholder="Rechercher..."
+                  placeholder="Search..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-9 pr-4 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 w-48"
@@ -306,12 +325,13 @@ const Admin = () => {
               <div className="relative">
                 <select
                   value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as "recent" | "views" | "name")}
+                  onChange={(e) => setSortBy(e.target.value as "recent" | "views" | "name" | "lastScan")}
                   className="appearance-none pl-4 pr-8 py-2 bg-slate-700 border border-slate-600 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
-                  <option value="recent">Plus récents</option>
-                  <option value="views">Plus vus</option>
-                  <option value="name">Alphabétique</option>
+                  <option value="recent">Most recent</option>
+                  <option value="views">Most viewed</option>
+                  <option value="lastScan">Last scanned</option>
+                  <option value="name">Alphabetical</option>
                 </select>
                 <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
               </div>
@@ -324,19 +344,19 @@ const Admin = () => {
               <thead className="bg-slate-700/50">
                 <tr>
                   <th className="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider">
-                    Utilisateur
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider hidden md:table-cell">
-                    Contact
+                    User
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider hidden lg:table-cell">
-                    Entreprise
+                    Contact
                   </th>
                   <th className="px-4 py-3 text-center text-xs font-medium text-slate-400 uppercase tracking-wider">
-                    Stats
+                    Views
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider hidden sm:table-cell">
-                    Inscription
+                    Registered
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-slate-400 uppercase tracking-wider hidden md:table-cell">
+                    Last scan
                   </th>
                   <th className="px-4 py-3 text-center text-xs font-medium text-slate-400 uppercase tracking-wider">
                     Actions
@@ -345,7 +365,7 @@ const Admin = () => {
               </thead>
               <tbody className="divide-y divide-slate-700">
                 {filteredProfiles.map((profile) => {
-                  const profileAnalytics = analytics[profile.id] || { views: 0, contacts: 0 };
+                  const profileAnalytics = analytics[profile.id] || { views: 0, contacts: 0, lastView: null };
                   return (
                     <tr key={profile.id} className="hover:bg-slate-700/30 transition-colors">
                       <td className="px-4 py-4">
@@ -370,7 +390,7 @@ const Admin = () => {
                           </div>
                         </div>
                       </td>
-                      <td className="px-4 py-4 hidden md:table-cell">
+                      <td className="px-4 py-4 hidden lg:table-cell">
                         <div className="text-sm">
                           {profile.email_contact && (
                             <p className="text-slate-300 flex items-center gap-1">
@@ -383,28 +403,29 @@ const Admin = () => {
                           )}
                         </div>
                       </td>
-                      <td className="px-4 py-4 hidden lg:table-cell">
-                        <span className="text-slate-300 text-sm">
-                          {profile.company || "-"}
-                        </span>
-                      </td>
                       <td className="px-4 py-4">
-                        <div className="flex items-center justify-center gap-4">
+                        <div className="flex items-center justify-center">
                           <div className="text-center">
-                            <p className="text-white font-medium">{profileAnalytics.views}</p>
-                            <p className="text-xs text-slate-400">vues</p>
-                          </div>
-                          <div className="text-center">
-                            <p className="text-white font-medium">{profileAnalytics.contacts}</p>
-                            <p className="text-xs text-slate-400">contacts</p>
+                            <p className="text-2xl font-bold text-white">{profileAnalytics.views}</p>
+                            <p className="text-xs text-slate-400">{profileAnalytics.contacts} contacts</p>
                           </div>
                         </div>
                       </td>
                       <td className="px-4 py-4 hidden sm:table-cell">
-                        <div className="flex items-center gap-1 text-slate-400 text-sm">
-                          <Clock className="w-3 h-3" />
-                          {getRelativeTime(profile.created_at)}
+                        <div className="text-sm">
+                          <p className="text-slate-300">{formatDate(profile.created_at).split(",")[0]}</p>
+                          <p className="text-xs text-slate-500">{getRelativeTime(profile.created_at)}</p>
                         </div>
+                      </td>
+                      <td className="px-4 py-4 hidden md:table-cell">
+                        {profileAnalytics.lastView ? (
+                          <div className="text-sm">
+                            <p className="text-slate-300">{formatDate(profileAnalytics.lastView).split(",")[0]}</p>
+                            <p className="text-xs text-slate-500">{getRelativeTime(profileAnalytics.lastView)}</p>
+                          </div>
+                        ) : (
+                          <span className="text-slate-500 text-sm">Never</span>
+                        )}
                       </td>
                       <td className="px-4 py-4">
                         <div className="flex items-center justify-center">
@@ -426,7 +447,7 @@ const Admin = () => {
             {filteredProfiles.length === 0 && (
               <div className="py-12 text-center">
                 <Users className="w-12 h-12 text-slate-600 mx-auto mb-3" />
-                <p className="text-slate-400">Aucun utilisateur trouvé</p>
+                <p className="text-slate-400">No users found</p>
               </div>
             )}
           </div>
