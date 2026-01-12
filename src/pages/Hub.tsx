@@ -46,7 +46,7 @@ const Hub = ({ lang }: HubProps) => {
       icon: <CreditCard className="h-5 w-5" />,
       href: "/mycard",
       available: true,
-      area: "md:[grid-area:1/1/2/7] xl:[grid-area:1/1/2/5]",
+      area: "md:[grid-area:1/1/2/7] xl:[grid-area:1/1/2/7]",
     },
     {
       id: "netsalaire",
@@ -56,7 +56,7 @@ const Hub = ({ lang }: HubProps) => {
       href: "https://www.netsalaire.com",
       external: true,
       available: true,
-      area: "md:[grid-area:1/7/2/13] xl:[grid-area:2/1/3/5]",
+      area: "md:[grid-area:1/7/2/13] xl:[grid-area:1/7/2/13]",
     },
     {
       id: "coming-1",
@@ -64,7 +64,7 @@ const Hub = ({ lang }: HubProps) => {
       description: t.tools.timeManagement.description,
       icon: <Clock className="h-5 w-5" />,
       available: false,
-      area: "md:[grid-area:2/1/3/7] xl:[grid-area:1/5/3/9]",
+      area: "md:[grid-area:2/1/3/7] xl:[grid-area:2/1/3/5]",
     },
     {
       id: "coming-2",
@@ -72,7 +72,7 @@ const Hub = ({ lang }: HubProps) => {
       description: t.tools.aiAssistant.description,
       icon: <Sparkles className="h-5 w-5" />,
       available: false,
-      area: "md:[grid-area:2/7/3/13] xl:[grid-area:1/9/2/13]",
+      area: "md:[grid-area:2/7/3/13] xl:[grid-area:2/5/3/9]",
     },
     {
       id: "coming-3",
