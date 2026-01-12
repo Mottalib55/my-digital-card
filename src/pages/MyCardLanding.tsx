@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { CreditCard, Users, Zap, Shield, ArrowRight, Sparkles } from "lucide-react";
 
-const Landing = () => {
+const MyCardLanding = () => {
   const navigate = useNavigate();
 
   const features = [
@@ -36,7 +36,7 @@ const Landing = () => {
             <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center">
               <CreditCard className="w-5 h-5 text-slate-900" />
             </div>
-            <span className="text-xl font-bold text-white">DigiCard</span>
+            <span onClick={() => navigate("/")} className="text-xl font-bold text-white cursor-pointer hover:text-slate-200 transition-colors">MyCard</span>
           </div>
           <div className="flex items-center gap-4">
             <button
@@ -159,11 +159,11 @@ const Landing = () => {
       {/* Footer */}
       <footer className="border-t border-white/10 py-8">
         <div className="container mx-auto px-6 text-center text-slate-400">
-          <p>© 2025 DigiCard. All rights reserved.</p>
+          <p>© 2025 MyCard by <span onClick={() => navigate("/")} className="text-blue-400 hover:text-blue-300 cursor-pointer">75tools</span>. All rights reserved.</p>
         </div>
       </footer>
     </div>
   );
 };
 
-export default Landing;
+export default MyCardLanding;
