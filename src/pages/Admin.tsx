@@ -10,7 +10,7 @@ import { supabase, Profile } from "@/lib/supabase";
 import SEO from "@/components/SEO";
 
 // Admin emails allowed to access this page
-const ADMIN_EMAILS = ["mottalib55@gmail.com"]; // Add your email here
+const ADMIN_EMAILS = ["mottalib55@gmail.com", "amradif@gmail.com"];
 
 interface UserStats {
   totalUsers: number;
