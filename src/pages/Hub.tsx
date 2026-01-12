@@ -6,8 +6,11 @@ import {
   Clock,
   ArrowRight,
   ExternalLink,
-  Wrench
+  Sparkles,
+  Zap,
 } from "lucide-react";
+import { GlowingEffect } from "@/components/ui/glowing-effect";
+import { cn } from "@/lib/utils";
 
 interface Tool {
   id: string;
@@ -17,6 +20,7 @@ interface Tool {
   href?: string;
   external?: boolean;
   available: boolean;
+  area: string;
 }
 
 const Hub = () => {
@@ -30,47 +34,45 @@ const Hub = () => {
     {
       id: "mycard",
       name: "MyCard",
-      description: "Créez votre carte de visite digitale professionnelle. Partagez vos contacts et réseaux en un clic.",
-      icon: <CreditCard className="w-8 h-8" />,
+      description: "Créez votre carte de visite digitale professionnelle. Partagez vos contacts et réseaux sociaux en un seul clic.",
+      icon: <CreditCard className="h-5 w-5" />,
       href: "/mycard",
       available: true,
+      area: "md:[grid-area:1/1/2/7] xl:[grid-area:1/1/2/5]",
     },
     {
       id: "netsalaire",
       name: "NetSalaire",
-      description: "Calculez votre salaire net à partir du brut. Simulez vos revenus en quelques secondes.",
-      icon: <Calculator className="w-8 h-8" />,
+      description: "Calculez instantanément votre salaire net à partir du brut. Simulez vos revenus avec précision.",
+      icon: <Calculator className="h-5 w-5" />,
       href: "https://www.netsalaire.com",
       external: true,
       available: true,
+      area: "md:[grid-area:1/7/2/13] xl:[grid-area:2/1/3/5]",
     },
     {
       id: "coming-1",
-      name: "Bientôt disponible",
-      description: "Un nouvel outil pour booster votre productivité arrive très bientôt.",
-      icon: <Clock className="w-8 h-8" />,
+      name: "Gestion de Temps",
+      description: "Optimisez votre productivité avec notre outil de gestion du temps intelligent.",
+      icon: <Clock className="h-5 w-5" />,
       available: false,
+      area: "md:[grid-area:2/1/3/7] xl:[grid-area:1/5/3/9]",
     },
     {
       id: "coming-2",
-      name: "Bientôt disponible",
-      description: "Un nouvel outil pour booster votre productivité arrive très bientôt.",
-      icon: <Clock className="w-8 h-8" />,
+      name: "Assistant IA",
+      description: "Boostez votre efficacité avec notre assistant intelligent propulsé par l'IA.",
+      icon: <Sparkles className="h-5 w-5" />,
       available: false,
+      area: "md:[grid-area:2/7/3/13] xl:[grid-area:1/9/2/13]",
     },
     {
       id: "coming-3",
-      name: "Bientôt disponible",
-      description: "Un nouvel outil pour booster votre productivité arrive très bientôt.",
-      icon: <Clock className="w-8 h-8" />,
+      name: "Automatisation",
+      description: "Automatisez vos tâches répétitives et gagnez un temps précieux chaque jour.",
+      icon: <Zap className="h-5 w-5" />,
       available: false,
-    },
-    {
-      id: "coming-4",
-      name: "Bientôt disponible",
-      description: "Un nouvel outil pour booster votre productivité arrive très bientôt.",
-      icon: <Clock className="w-8 h-8" />,
-      available: false,
+      area: "md:[grid-area:3/1/4/13] xl:[grid-area:2/9/3/13]",
     },
   ];
 
@@ -85,19 +87,20 @@ const Hub = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-neutral-950">
       {/* Header */}
-      <header className="bg-white border-b border-slate-200">
-        <div className="container mx-auto px-6 py-4">
+      <header className="border-b border-neutral-800">
+        <div className="container mx-auto px-6 py-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center">
-                <Wrench className="w-5 h-5 text-white" />
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
+                <Zap className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl font-bold text-slate-900">75tools</span>
+              <span className="text-xl font-bold text-white">75tools</span>
             </div>
-            <div className="hidden sm:flex items-center gap-2 text-sm text-slate-500">
-              <span className="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 px-3 py-1 rounded-full font-medium">
+            <div className="flex items-center gap-3">
+              <span className="hidden sm:inline-flex items-center gap-2 text-sm text-neutral-400 bg-neutral-900 px-4 py-2 rounded-full border border-neutral-800">
+                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
                 2 outils disponibles
               </span>
             </div>
@@ -106,17 +109,25 @@ const Hub = () => {
       </header>
 
       {/* Hero Section */}
-      <section className="py-16 md:py-24">
+      <section className="py-20 md:py-28">
         <div className="container mx-auto px-6 text-center">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-slate-900 mb-6 leading-tight">
-            Tous vos outils de productivité
+          <div className="inline-flex items-center gap-2 bg-neutral-900 text-neutral-300 px-4 py-2 rounded-full text-sm font-medium mb-8 border border-neutral-800">
+            <Sparkles className="w-4 h-4 text-yellow-500" />
+            Nouveaux outils en préparation
+          </div>
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight tracking-tight">
+            Vos outils de
             <br />
-            <span className="text-blue-600">en un seul endroit</span>
+            <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+              productivité
+            </span>
           </h1>
-          <p className="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto mb-4">
-            Des solutions gratuites pour augmenter votre performance et éclairer vos décisions.
+          <p className="text-lg md:text-xl text-neutral-400 max-w-2xl mx-auto mb-4 leading-relaxed">
+            Des solutions gratuites pour augmenter votre performance
+            <br className="hidden md:block" />
+            et éclairer vos décisions professionnelles.
           </p>
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-neutral-500">
             Gratuit • Sans inscription • Accessible à tous
           </p>
         </div>
@@ -125,78 +136,119 @@ const Hub = () => {
       {/* Tools Grid */}
       <section className="pb-24">
         <div className="container mx-auto px-6">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          <ul className="grid grid-cols-1 gap-4 md:grid-cols-12 md:grid-rows-3 lg:gap-5 xl:max-h-[38rem] xl:grid-rows-2 max-w-6xl mx-auto">
             {tools.map((tool) => (
-              <div
+              <GridItem
                 key={tool.id}
+                tool={tool}
                 onClick={() => handleToolClick(tool)}
-                className={`
-                  relative rounded-2xl p-6 transition-all duration-200
-                  ${tool.available
-                    ? "bg-white border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-200 cursor-pointer group"
-                    : "bg-slate-100 border border-slate-200 cursor-default"
-                  }
-                `}
-              >
-                {/* Icon */}
-                <div className={`
-                  w-14 h-14 rounded-xl flex items-center justify-center mb-4
-                  ${tool.available
-                    ? "bg-blue-50 text-blue-600 group-hover:bg-blue-100"
-                    : "bg-slate-200 text-slate-400"
-                  }
-                `}>
-                  {tool.icon}
-                </div>
-
-                {/* Content */}
-                <h3 className={`
-                  text-lg font-semibold mb-2
-                  ${tool.available ? "text-slate-900" : "text-slate-400"}
-                `}>
-                  {tool.name}
-                </h3>
-                <p className={`
-                  text-sm leading-relaxed
-                  ${tool.available ? "text-slate-600" : "text-slate-400"}
-                `}>
-                  {tool.description}
-                </p>
-
-                {/* Action indicator */}
-                {tool.available && (
-                  <div className="mt-4 flex items-center gap-1 text-blue-600 text-sm font-medium">
-                    <span>Accéder</span>
-                    {tool.external ? (
-                      <ExternalLink className="w-4 h-4" />
-                    ) : (
-                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                    )}
-                  </div>
-                )}
-
-                {/* Coming soon badge */}
-                {!tool.available && (
-                  <div className="mt-4">
-                    <span className="inline-flex items-center gap-1 text-xs font-medium text-slate-400 bg-slate-200 px-2 py-1 rounded-full">
-                      <Clock className="w-3 h-3" />
-                      Bientôt
-                    </span>
-                  </div>
-                )}
-              </div>
+              />
             ))}
-          </div>
+          </ul>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-slate-200 bg-white py-8">
-        <div className="container mx-auto px-6 text-center text-slate-500 text-sm">
+      <footer className="border-t border-neutral-800 py-8">
+        <div className="container mx-auto px-6 text-center text-neutral-500 text-sm">
           <p>© 2025 75tools. Tous droits réservés.</p>
         </div>
       </footer>
     </div>
+  );
+};
+
+interface GridItemProps {
+  tool: Tool;
+  onClick: () => void;
+}
+
+const GridItem = ({ tool, onClick }: GridItemProps) => {
+  return (
+    <li className={cn("min-h-[14rem] list-none", tool.area)}>
+      <div
+        onClick={tool.available ? onClick : undefined}
+        className={cn(
+          "relative h-full rounded-[1.25rem] border-[0.75px] p-2 md:rounded-[1.5rem] md:p-3",
+          tool.available
+            ? "border-neutral-800 cursor-pointer"
+            : "border-neutral-800/50"
+        )}
+      >
+        {tool.available && (
+          <GlowingEffect
+            spread={40}
+            glow={true}
+            disabled={false}
+            proximity={64}
+            inactiveZone={0.01}
+            borderWidth={3}
+          />
+        )}
+        <div
+          className={cn(
+            "relative flex h-full flex-col justify-between gap-6 overflow-hidden rounded-xl border-[0.75px] p-6 shadow-sm md:p-6",
+            tool.available
+              ? "bg-neutral-900 border-neutral-800"
+              : "bg-neutral-900/50 border-neutral-800/50"
+          )}
+        >
+          <div className="relative flex flex-1 flex-col justify-between gap-3">
+            {/* Icon */}
+            <div
+              className={cn(
+                "w-fit rounded-lg border-[0.75px] p-2.5",
+                tool.available
+                  ? "border-neutral-700 bg-neutral-800 text-white"
+                  : "border-neutral-800 bg-neutral-800/50 text-neutral-600"
+              )}
+            >
+              {tool.icon}
+            </div>
+
+            {/* Content */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <h3
+                  className={cn(
+                    "text-xl leading-tight font-semibold tracking-tight md:text-2xl",
+                    tool.available ? "text-white" : "text-neutral-600"
+                  )}
+                >
+                  {tool.name}
+                </h3>
+                {!tool.available && (
+                  <span className="inline-flex items-center gap-1 text-xs font-medium text-neutral-500 bg-neutral-800 px-2 py-1 rounded-full">
+                    <Clock className="w-3 h-3" />
+                    Bientôt
+                  </span>
+                )}
+              </div>
+              <p
+                className={cn(
+                  "text-sm leading-relaxed md:text-base",
+                  tool.available ? "text-neutral-400" : "text-neutral-600"
+                )}
+              >
+                {tool.description}
+              </p>
+            </div>
+
+            {/* Action */}
+            {tool.available && (
+              <div className="flex items-center gap-1.5 text-blue-400 text-sm font-medium mt-2 group-hover:gap-2 transition-all">
+                <span>Accéder à l'outil</span>
+                {tool.external ? (
+                  <ExternalLink className="w-4 h-4" />
+                ) : (
+                  <ArrowRight className="w-4 h-4" />
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </li>
   );
 };
 
