@@ -14,6 +14,7 @@ import PublicCard from "./pages/PublicCard";
 import NotFound from "./pages/NotFound";
 import LanguageRedirect from "./components/LanguageRedirect";
 
+// Initialize React Query client
 const queryClient = new QueryClient();
 
 const App = () => (
