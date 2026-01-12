@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import {
   Instagram, Linkedin, Github, Facebook, Youtube,
   Mail, Phone, UserPlus, Globe, QrCode, Download,
-  LayoutDashboard, LogIn, UserPlus as UserPlusIcon
+  LayoutDashboard, LogIn, UserPlus as UserPlusIcon, ArrowLeft
 } from "lucide-react";
 
 // Custom SVG icons for social platforms
@@ -270,6 +270,17 @@ END:VCARD`.replace(/\n{2,}/g, "\n");
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-100 to-slate-200 p-6">
+      {/* Back to MyCard */}
+      <div className="max-w-md mx-auto mb-4">
+        <button
+          onClick={() => navigate("/mycard")}
+          className="flex items-center gap-2 text-slate-500 hover:text-slate-700 transition-colors"
+        >
+          <ArrowLeft size={18} />
+          <span className="text-sm">MyCard</span>
+        </button>
+      </div>
+
       {/* Navigation */}
       {!authLoading && (
         <div className="max-w-md mx-auto mb-4">
