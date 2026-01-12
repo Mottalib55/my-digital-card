@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   CreditCard,
   Calculator,
@@ -8,9 +8,11 @@ import {
   ExternalLink,
   Sparkles,
   Zap,
+  Globe,
 } from "lucide-react";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
 import { cn } from "@/lib/utils";
+import { Language, getTranslations, Translations } from "@/lib/i18n";
 
 interface Tool {
   id: string;
@@ -23,8 +25,14 @@ interface Tool {
   area: string;
 }
 
-const Hub = () => {
+interface HubProps {
+  lang: Language;
+}
+
+const Hub = ({ lang }: HubProps) => {
   const navigate = useNavigate();
+  const t = getTranslations(lang);
+  const otherLang = lang === "fr" ? "en" : "fr";
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -33,8 +41,8 @@ const Hub = () => {
   const tools: Tool[] = [
     {
       id: "mycard",
-      name: "MyCard",
-      description: "Créez votre carte de visite digitale professionnelle. Partagez vos contacts et réseaux sociaux en un seul clic.",
+      name: t.tools.mycard.name,
+      description: t.tools.mycard.description,
       icon: <CreditCard className="h-5 w-5" />,
       href: "/mycard",
       available: true,
@@ -42,8 +50,8 @@ const Hub = () => {
     },
     {
       id: "netsalaire",
-      name: "NetSalaire",
-      description: "Calculez instantanément votre salaire net à partir du brut. Simulez vos revenus avec précision.",
+      name: t.tools.netsalaire.name,
+      description: t.tools.netsalaire.description,
       icon: <Calculator className="h-5 w-5" />,
       href: "https://www.netsalaire.com",
       external: true,
@@ -52,24 +60,24 @@ const Hub = () => {
     },
     {
       id: "coming-1",
-      name: "Gestion de Temps",
-      description: "Optimisez votre productivité avec notre outil de gestion du temps intelligent.",
+      name: t.tools.timeManagement.name,
+      description: t.tools.timeManagement.description,
       icon: <Clock className="h-5 w-5" />,
       available: false,
       area: "md:[grid-area:2/1/3/7] xl:[grid-area:1/5/3/9]",
     },
     {
       id: "coming-2",
-      name: "Assistant IA",
-      description: "Boostez votre efficacité avec notre assistant intelligent propulsé par l'IA.",
+      name: t.tools.aiAssistant.name,
+      description: t.tools.aiAssistant.description,
       icon: <Sparkles className="h-5 w-5" />,
       available: false,
       area: "md:[grid-area:2/7/3/13] xl:[grid-area:1/9/2/13]",
     },
     {
       id: "coming-3",
-      name: "Automatisation",
-      description: "Automatisez vos tâches répétitives et gagnez un temps précieux chaque jour.",
+      name: t.tools.automation.name,
+      description: t.tools.automation.description,
       icon: <Zap className="h-5 w-5" />,
       available: false,
       area: "md:[grid-area:3/1/4/13] xl:[grid-area:2/9/3/13]",
@@ -84,6 +92,10 @@ const Hub = () => {
     } else {
       navigate(tool.href);
     }
+  };
+
+  const switchLanguage = () => {
+    navigate(`/${otherLang}`);
   };
 
   return (
@@ -101,8 +113,16 @@ const Hub = () => {
             <div className="flex items-center gap-3">
               <span className="hidden sm:inline-flex items-center gap-2 text-sm text-neutral-400 bg-neutral-900 px-4 py-2 rounded-full border border-neutral-800">
                 <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
-                2 outils disponibles
+                2 {t.header.toolsAvailable}
               </span>
+              {/* Language Switcher */}
+              <button
+                onClick={switchLanguage}
+                className="inline-flex items-center gap-2 text-sm text-neutral-400 bg-neutral-900 hover:bg-neutral-800 px-3 py-2 rounded-full border border-neutral-800 transition-colors"
+              >
+                <Globe className="w-4 h-4" />
+                <span className="uppercase font-medium">{otherLang}</span>
+              </button>
             </div>
           </div>
         </div>
@@ -113,22 +133,20 @@ const Hub = () => {
         <div className="container mx-auto px-6 text-center">
           <div className="inline-flex items-center gap-2 bg-neutral-900 text-neutral-300 px-4 py-2 rounded-full text-sm font-medium mb-8 border border-neutral-800">
             <Sparkles className="w-4 h-4 text-yellow-500" />
-            Nouveaux outils en préparation
+            {t.hero.badge}
           </div>
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight tracking-tight">
-            Vos outils de
+            {t.hero.title1}
             <br />
             <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-              productivité
+              {t.hero.title2}
             </span>
           </h1>
           <p className="text-lg md:text-xl text-neutral-400 max-w-2xl mx-auto mb-4 leading-relaxed">
-            Des solutions gratuites pour augmenter votre performance
-            <br className="hidden md:block" />
-            et éclairer vos décisions professionnelles.
+            {t.hero.description}
           </p>
           <p className="text-sm text-neutral-500">
-            Gratuit • Sans inscription • Accessible à tous
+            {t.hero.subtitle}
           </p>
         </div>
       </section>
@@ -142,6 +160,7 @@ const Hub = () => {
                 key={tool.id}
                 tool={tool}
                 onClick={() => handleToolClick(tool)}
+                t={t}
               />
             ))}
           </ul>
@@ -151,7 +170,7 @@ const Hub = () => {
       {/* Footer */}
       <footer className="border-t border-neutral-800 py-8">
         <div className="container mx-auto px-6 text-center text-neutral-500 text-sm">
-          <p>© 2025 75tools. Tous droits réservés.</p>
+          <p>{t.footer.copyright}</p>
         </div>
       </footer>
     </div>
@@ -161,9 +180,10 @@ const Hub = () => {
 interface GridItemProps {
   tool: Tool;
   onClick: () => void;
+  t: Translations;
 }
 
-const GridItem = ({ tool, onClick }: GridItemProps) => {
+const GridItem = ({ tool, onClick, t }: GridItemProps) => {
   return (
     <li className={cn("min-h-[14rem] list-none", tool.area)}>
       <div
@@ -220,7 +240,7 @@ const GridItem = ({ tool, onClick }: GridItemProps) => {
                 {!tool.available && (
                   <span className="inline-flex items-center gap-1 text-xs font-medium text-neutral-500 bg-neutral-800 px-2 py-1 rounded-full">
                     <Clock className="w-3 h-3" />
-                    Bientôt
+                    {t.tools.comingSoon}
                   </span>
                 )}
               </div>
@@ -237,7 +257,7 @@ const GridItem = ({ tool, onClick }: GridItemProps) => {
             {/* Action */}
             {tool.available && (
               <div className="flex items-center gap-1.5 text-blue-400 text-sm font-medium mt-2 group-hover:gap-2 transition-all">
-                <span>Accéder à l'outil</span>
+                <span>{t.tools.accessTool}</span>
                 {tool.external ? (
                   <ExternalLink className="w-4 h-4" />
                 ) : (

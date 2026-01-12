@@ -12,6 +12,7 @@ import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import PublicCard from "./pages/PublicCard";
 import NotFound from "./pages/NotFound";
+import LanguageRedirect from "./components/LanguageRedirect";
 
 const queryClient = new QueryClient();
 
@@ -23,12 +24,23 @@ const App = () => (
         <Sonner />
         <HashRouter>
           <Routes>
-            <Route path="/" element={<Hub />} />
+            {/* Language redirect */}
+            <Route path="/" element={<LanguageRedirect />} />
+
+            {/* French routes */}
+            <Route path="/fr" element={<Hub lang="fr" />} />
+
+            {/* English routes */}
+            <Route path="/en" element={<Hub lang="en" />} />
+
+            {/* MyCard routes */}
             <Route path="/mycard" element={<MyCardLanding />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/card/:username" element={<PublicCard />} />
+
+            {/* 404 */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </HashRouter>
