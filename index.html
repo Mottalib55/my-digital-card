@@ -22,8 +22,30 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <link rel="manifest" href="/site.webmanifest" />
     <meta name="msapplication-TileColor" content="#0a0a0a" />
+
+    <!-- Conditional manifest - only for non-card pages -->
+    <script>
+      (function() {
+        var path = window.location.pathname;
+        var params = new URLSearchParams(window.location.search);
+        var redirect = params.get('redirect');
+        var effectivePath = redirect ? decodeURIComponent(redirect) : path;
+
+        // For card pages, don't load the static manifest - let React handle it dynamically
+        if (!effectivePath.startsWith('/card/')) {
+          var link = document.createElement('link');
+          link.rel = 'manifest';
+          link.href = '/site.webmanifest';
+          document.head.appendChild(link);
+        }
+
+        // GitHub Pages SPA redirect handler
+        if (redirect) {
+          window.history.replaceState(null, null, effectivePath);
+        }
+      })();
+    </script>
     <meta name="theme-color" content="#0a0a0a" />
 
     <!-- Open Graph / Facebook -->
@@ -66,16 +88,6 @@
     <link rel="alternate" hreflang="en" href="https://75tools.fr/en" />
     <link rel="alternate" hreflang="x-default" href="https://75tools.fr" />
 
-    <!-- GitHub Pages SPA redirect handler - MUST run before React -->
-    <script>
-      (function() {
-        var params = new URLSearchParams(window.location.search);
-        var redirect = params.get('redirect');
-        if (redirect) {
-          window.history.replaceState(null, null, decodeURIComponent(redirect));
-        }
-      })();
-    </script>
   </head>
 
   <body>
