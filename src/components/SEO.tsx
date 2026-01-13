@@ -15,6 +15,7 @@ interface SEOProps {
   jsonLd?: object | object[];
   publishedTime?: string;
   modifiedTime?: string;
+  appTitle?: string; // Custom title for "Add to Home Screen" on iOS
 }
 
 const SEO = ({
@@ -32,6 +33,7 @@ const SEO = ({
   jsonLd,
   publishedTime,
   modifiedTime,
+  appTitle,
 }: SEOProps) => {
   const fullTitle = title.includes("75tools") || title.includes("MyCard")
     ? title
@@ -136,8 +138,8 @@ const SEO = ({
       <meta name="msapplication-TileColor" content="#0a0a0a" />
       <meta name="apple-mobile-web-app-capable" content="yes" />
       <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-      <meta name="apple-mobile-web-app-title" content="75tools" />
-      <meta name="application-name" content="75tools" />
+      <meta name="apple-mobile-web-app-title" content={appTitle || "75tools"} />
+      <meta name="application-name" content={appTitle || "75tools"} />
       <meta name="mobile-web-app-capable" content="yes" />
       <meta name="format-detection" content="telephone=no" />
 

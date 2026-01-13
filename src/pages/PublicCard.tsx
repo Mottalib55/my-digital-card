@@ -107,20 +107,23 @@ const PublicCard = () => {
     if (!profile || !username) return;
 
     const fullName = `${profile.first_name || ""} ${profile.last_name || ""}`.trim();
-    const cardUrl = `/card/${username}`;
+    // Use absolute URL for iOS Safari compatibility
+    const baseUrl = window.location.origin;
+    const cardUrl = `${baseUrl}/card/${username}`;
 
     const manifest = {
       name: fullName || "Digital Card",
       short_name: profile.first_name || "Card",
       description: profile.title ? `${fullName} - ${profile.title}` : `${fullName}'s digital business card`,
       start_url: cardUrl,
-      scope: cardUrl,
+      scope: `${baseUrl}/card/`,
+      id: `/card/${username}`,
       display: "standalone",
       background_color: "#f1f5f9",
       theme_color: "#0f172a",
       icons: [
         {
-          src: profile.avatar_url || "/favicon.svg",
+          src: profile.avatar_url || `${baseUrl}/favicon.svg`,
           sizes: "any",
           type: profile.avatar_url ? "image/jpeg" : "image/svg+xml",
           purpose: "any maskable"
@@ -378,6 +381,7 @@ END:VCARD`.replace(/\n{2,}/g, "\n");
         type="profile"
         image={profile.avatar_url || "https://75tools.fr/og-image.svg"}
         imageAlt={`Digital business card of ${fullName}`}
+        appTitle={fullName || "Card"}
         jsonLd={{
           "@context": "https://schema.org",
           "@type": "Person",
