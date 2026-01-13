@@ -24,7 +24,7 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <meta name="msapplication-TileColor" content="#0a0a0a" />
 
-    <!-- Conditional manifest - only for non-card pages -->
+    <!-- Conditional manifest and iOS meta tags for card pages -->
     <script>
       (function() {
         var path = window.location.pathname;
@@ -32,17 +32,49 @@
         var redirect = params.get('redirect');
         var effectivePath = redirect ? decodeURIComponent(redirect) : path;
 
-        // For card pages, don't load the static manifest - let React handle it dynamically
-        if (!effectivePath.startsWith('/card/')) {
+        // GitHub Pages SPA redirect handler
+        if (redirect) {
+          window.history.replaceState(null, null, effectivePath);
+        }
+
+        // For card pages, customize iOS Add to Home Screen
+        if (effectivePath.startsWith('/card/')) {
+          var username = effectivePath.split('/card/')[1]?.split('/')[0]?.split('?')[0];
+          if (username) {
+            // Update apple-mobile-web-app-title for iOS
+            var appleTitleMeta = document.querySelector('meta[name="apple-mobile-web-app-title"]');
+            if (appleTitleMeta) {
+              appleTitleMeta.setAttribute('content', username);
+            }
+            // Update application-name
+            var appNameMeta = document.querySelector('meta[name="application-name"]');
+            if (appNameMeta) {
+              appNameMeta.setAttribute('content', username);
+            }
+            // Update page title
+            document.title = username + ' - Digital Card';
+
+            // Create a minimal manifest for this card
+            var manifest = {
+              name: username + ' - Digital Card',
+              short_name: username,
+              start_url: effectivePath,
+              display: 'standalone',
+              background_color: '#f1f5f9',
+              theme_color: '#0f172a'
+            };
+            var blob = new Blob([JSON.stringify(manifest)], {type: 'application/json'});
+            var manifestLink = document.createElement('link');
+            manifestLink.rel = 'manifest';
+            manifestLink.href = URL.createObjectURL(blob);
+            document.head.appendChild(manifestLink);
+          }
+        } else {
+          // For non-card pages, use static manifest
           var link = document.createElement('link');
           link.rel = 'manifest';
           link.href = '/site.webmanifest';
           document.head.appendChild(link);
-        }
-
-        // GitHub Pages SPA redirect handler
-        if (redirect) {
-          window.history.replaceState(null, null, effectivePath);
         }
       })();
     </script>
