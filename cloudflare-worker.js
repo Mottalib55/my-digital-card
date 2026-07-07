@@ -1,9 +1,39 @@
 // Cloudflare Worker pour 75tools.fr
 // Ce worker intercepte les requêtes vers /card/* et injecte les bons meta tags
+// et proxie /seo/* vers le SEO platform sur Vercel
+
+const SEO_PLATFORM_ORIGIN = 'https://seo-platform-sigma.vercel.app';
 
 export default {
   async fetch(request) {
     const url = new URL(request.url);
+
+    // Proxy /seo/* to SEO platform on Vercel (strip /seo prefix)
+    if (url.pathname === '/seo' || url.pathname.startsWith('/seo/')) {
+      const strippedPath = url.pathname === '/seo' ? '/' : url.pathname.slice(4);
+      const targetUrl = new URL(strippedPath + url.search, SEO_PLATFORM_ORIGIN);
+      const proxyRequest = new Request(targetUrl, {
+        method: request.method,
+        headers: request.headers,
+        body: request.body,
+        redirect: 'manual',
+      });
+      const response = await fetch(proxyRequest);
+      // Pass through the response, rewriting any Location headers
+      const newHeaders = new Headers(response.headers);
+      const location = newHeaders.get('location');
+      if (location) {
+        const locUrl = new URL(location, SEO_PLATFORM_ORIGIN);
+        if (locUrl.origin === SEO_PLATFORM_ORIGIN) {
+          newHeaders.set('location', locUrl.pathname + locUrl.search);
+        }
+      }
+      return new Response(response.body, {
+        status: response.status,
+        statusText: response.statusText,
+        headers: newHeaders,
+      });
+    }
 
     // Only process /card/* routes
     if (!url.pathname.startsWith('/card/')) {
